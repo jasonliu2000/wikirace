@@ -11,6 +11,8 @@ public class WikiRace {
     String finish = sc.next();
     sc.close();
 
+    System.out.println("We want to go from wiki page " + start + " to wiki page " + finish);
+
     WikiTree tree = new WikiTree(start, finish);
     System.out.println(tree.Search());
   }
