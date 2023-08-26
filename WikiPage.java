@@ -34,11 +34,12 @@ public class WikiPage {
 					// TODO: consider removing subcategory fragment in urls
 					// ex. "/wiki/White_paper#In_government" should be changed to "/wiki/White_paper"
 
-					for (String u : urls) {
-						String linkName = u.substring(wikiSubPath.length());
-						links.addLast(linkName);
-					}
+					urls.forEach(u -> {
+						u = u.substring(wikiSubPath.length());
+						links.addLast(u);
+					});
 				}
+
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
