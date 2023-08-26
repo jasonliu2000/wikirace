@@ -13,7 +13,6 @@ public class WikiPage {
 				Document doc = Jsoup.connect("https://en.wikipedia.org/wiki/Wikiracing").get();
 				String body = doc.body().text();
 				System.out.println(body);
-			}
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
