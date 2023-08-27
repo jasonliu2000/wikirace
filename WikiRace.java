@@ -3,7 +3,7 @@ import java.util.Scanner;
 public class WikiRace {
 
   public static void main(String[] args) {
-    String input = "Wikiracing United_States";
+    String input = "Wikiracing London";
     Scanner sc = new Scanner(input);
     // Scanner sc = new Scanner(System.in);
 
@@ -14,6 +14,6 @@ public class WikiRace {
     System.out.println("We want to go from wiki page " + start + " to wiki page " + finish);
 
     WikiTree tree = new WikiTree(start, finish);
-    System.out.println(tree.Search());
+    System.out.println(tree.search());
   }
 }

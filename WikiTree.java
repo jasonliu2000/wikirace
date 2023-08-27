@@ -18,7 +18,7 @@ public class WikiTree {
     startTime = System.currentTimeMillis();
   }
 
-  public String Search() {
+  public String search() {
     System.out.println("!!!!! LEVEL = " + String.valueOf(level) + " !!!!!");
 
     int currentBacklogSize = backlog.size();
@@ -30,7 +30,7 @@ public class WikiTree {
       System.out.println(" -- Current link: " + currentLink);
 
       if (currentLink.equals(targetLink)) {
-        return SuccessMessage();
+        return successMessage();
       }
 
       WikiPage currentPage = new WikiPage(currentLink);
@@ -42,10 +42,10 @@ public class WikiTree {
 
     level += 1;
 
-    return Search();
+    return search();
   }
 
-  String SuccessMessage() {
+  String successMessage() {
     String time = String.format("Time taken: %s ms", System.currentTimeMillis() - startTime);
 
     String linkString = (level == 1) ? "link" : "links";
