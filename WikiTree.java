@@ -1,8 +1,9 @@
 import java.util.LinkedList;
 
 public class WikiTree {
-  String currentLink;
+  String startLink;
   String targetLink;
+  String currentLink;
   int level = 0;
 
   LinkedList<String> backlog = new LinkedList<String>();
@@ -10,7 +11,7 @@ public class WikiTree {
   public WikiTree(String start, String finish) {
     // TODO: assert that we have a start and finish
     backlog.add(start);
-    // currentLink = start;
+    startLink = start;
     targetLink = finish;
   }
 
@@ -26,7 +27,7 @@ public class WikiTree {
       System.out.println(" -- Current link: " + currentLink);
 
       if (currentLink.equals(targetLink)) {
-        return currentLink + " and " + targetLink + " are " + String.valueOf(level) + " links away";
+        return SuccessMessage();
       }
 
       WikiPage currentPage = new WikiPage(currentLink);
@@ -39,5 +40,10 @@ public class WikiTree {
     level += 1;
 
     return Search();
+  }
+
+  String SuccessMessage() {
+    String linkString = (level == 1) ? "link" : "links";
+    return String.format("%s and %s are %s %s away", startLink, targetLink, String.valueOf(level), linkString);
   }
 }
