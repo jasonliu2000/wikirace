@@ -36,7 +36,12 @@ public class WikiPage {
 
 					urls.forEach(u -> {
 						u = u.substring(wikiSubPath.length());
-						links.addLast(u);
+
+						// Only add to links if it's not in backlog yet
+						if (!BacklogHistory.contains(u)) {
+							links.addLast(u);
+							BacklogHistory.add(u);
+						}
 					});
 				}
 
