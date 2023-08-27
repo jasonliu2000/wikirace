@@ -4,15 +4,18 @@ public class WikiTree {
   String startLink;
   String targetLink;
   String currentLink;
-  int level = 0;
+  long startTime;
 
+  int level = 0;
   LinkedList<String> backlog = new LinkedList<String>();
 
   public WikiTree(String start, String finish) {
     // TODO: assert that we have a start and finish
-    backlog.add(start);
     startLink = start;
     targetLink = finish;
+
+    backlog.add(start);
+    startTime = System.currentTimeMillis();
   }
 
   public String Search() {
@@ -27,6 +30,7 @@ public class WikiTree {
       System.out.println(" -- Current link: " + currentLink);
 
       if (currentLink.equals(targetLink)) {
+        System.out.println(String.format("Time taken: %s ms", System.currentTimeMillis() - startTime));
         return SuccessMessage();
       }
 
