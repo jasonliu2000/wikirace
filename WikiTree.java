@@ -1,30 +1,43 @@
+import java.util.LinkedList;
+
 public class WikiTree {
-  String startNode;
-  String targetNode;
+  String currentLink;
+  String targetLink;
   int level = 0;
 
+  LinkedList<String> backlog = new LinkedList<String>();
+
   public WikiTree(String start, String finish) {
-    startNode = start;
-    targetNode = finish;
+    // TODO: assert that we have a start and finish
+    backlog.add(start);
+    // currentLink = start;
+    targetLink = finish;
   }
 
   public String Search() {
-    System.out.println("Going through " + startNode + "'s links:");
-    level += 1;
+    System.out.println("!!!!! LEVEL = " + String.valueOf(level) + " !!!!!");
 
-    WikiPage startPage = new WikiPage(startNode);
-    for (String link : startPage.getLinks()) {
-      if (link.equals(targetNode)) {
-        return startNode + " and " + targetNode + " are " + String.valueOf(level) + " links away";
+    int currentBacklogSize = backlog.size();
+    System.out.println("Current backlog size: " + currentBacklogSize);
+    System.out.println("Backlog items: " + backlog.toString());
+
+    for (int i = 0; i < currentBacklogSize; i++) {
+      String currentLink = backlog.pop();
+      System.out.println(" -- Current link: " + currentLink);
+
+      if (currentLink.equals(targetLink)) {
+        return currentLink + " and " + targetLink + " are " + String.valueOf(level) + " links away";
       }
+
+      WikiPage currentPage = new WikiPage(currentLink);
+
+      // Add all links in current page to backlog - to be checked
+      backlog.addAll(currentPage.getLinks());
+      System.out.println("    Added " + String.valueOf(currentPage.getLinks().size()) + " links to backlog from wiki page " + currentLink);
     }
 
-    // System.out.println("Printing out " + targetNode + "'s links:");
-    // WikiPage targetPage = new WikiPage(targetNode);
-    // for (String link : targetPage.GetLinks()) {
-    //   System.out.println(link);
-    // }
+    level += 1;
 
-    return "";
+    return Search();
   }
 }
