@@ -30,7 +30,6 @@ public class WikiTree {
       System.out.println(" -- Current link: " + currentLink);
 
       if (currentLink.equals(targetLink)) {
-        System.out.println(String.format("Time taken: %s ms", System.currentTimeMillis() - startTime));
         return SuccessMessage();
       }
 
@@ -47,7 +46,14 @@ public class WikiTree {
   }
 
   String SuccessMessage() {
+    String time = String.format("Time taken: %s ms", System.currentTimeMillis() - startTime);
+
     String linkString = (level == 1) ? "link" : "links";
-    return String.format("%s and %s are %s %s away", startLink, targetLink, String.valueOf(level), linkString);
+    String message = String.format("%s and %s are %s %s away", startLink, targetLink, String.valueOf(level), linkString);
+
+    // TODO: return path taken to go from start to finish
+    String path = "";
+
+    return String.format("%s\n%s\n%s", time, message, path);
   }
 }
