@@ -3,13 +3,12 @@ import java.util.Scanner;
 public class WikiRace {
 
   public static void main(String[] args) {
-    String input = "Wikiracing London";
-    Scanner sc = new Scanner(input);
-    // Scanner sc = new Scanner(System.in);
+    if (args.length != 2) {
+      throw new IllegalArgumentException("Invalid number of arguments. Expected 2 (First is starting page and second is the desired page)");
+    }
 
-    String start = sc.next();
-    String finish = sc.next();
-    sc.close();
+    String start = args[0];
+    String finish = args[1];
 
     System.out.println("We want to go from wiki page " + start + " to wiki page " + finish);
 
