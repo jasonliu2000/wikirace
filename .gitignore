@@ -1,5 +1,1 @@
-# Ignore compiled files
-*.class
-
-# Ignore src file
-src/
+.vscode/

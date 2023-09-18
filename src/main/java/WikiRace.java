@@ -1,4 +1,4 @@
-import java.util.Scanner;
+// package src.main.java;
 
 public class WikiRace {
 
