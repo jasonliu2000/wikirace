@@ -1,4 +1,4 @@
-package src.test.java.com.jasonliu.app;
+package com.jasonliu.app;
 
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;

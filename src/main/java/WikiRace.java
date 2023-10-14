@@ -1,5 +1,3 @@
-// package src.main.java;
-
 public class WikiRace {
 
   public static void main(String[] args) {
