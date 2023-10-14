@@ -8,14 +8,21 @@ import org.jsoup.select.Elements;
 public class WikiPage {
 	String wikiBaseUrl = "https://en.wikipedia.org";
 	String wikiSubPath = "/wiki/";
+	String title;
 
 	private LinkedList<String> links = new LinkedList<String>();
-	String title;
 
 	public WikiPage(String endPath) {
 		title = endPath;
-		String url = wikiBaseUrl + wikiSubPath + endPath;
+		parsePage();		
+	}
 
+	public LinkedList<String> getLinks() {
+		return links;
+	}
+
+	private void parsePage() {
+		String url = wikiBaseUrl + wikiSubPath + title;
 		try {
 				Document doc = Jsoup.connect(url).get();
 				Element body = doc.body();
@@ -44,9 +51,5 @@ public class WikiPage {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	public LinkedList<String> getLinks() {
-		return links;
 	}
 }
