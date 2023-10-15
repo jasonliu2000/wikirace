@@ -1,58 +1,59 @@
 import java.util.LinkedList;
 
 public class WikiTree {
-  String startLink;
-  String targetLink;
-  String currentLink;
   long startTime;
+  String startingPage;
+  String targetPage;
+  WikiNode currentNode;
 
   int level = 0;
-  LinkedList<String> backlog = new LinkedList<String>();
 
   public WikiTree(String start, String finish) {
-    // TODO: assert that we have a start and finish
-    startLink = start;
-    targetLink = finish;
-
-    backlog.add(start);
     startTime = System.currentTimeMillis();
+    startingPage = start;
+    targetPage = finish;
+
+    WikiNode startNode = new WikiNode(startingPage);
+    Backlog.add(startNode);
   }
 
   public String search() {
     System.out.println("!!!!! LEVEL = " + String.valueOf(level) + " !!!!!");
 
-    int currentBacklogSize = backlog.size();
+    int currentBacklogSize = Backlog.size();
     System.out.println("Current backlog size: " + currentBacklogSize);
-    System.out.println("Backlog items: " + backlog.toString());
+    System.out.println("Backlog items: " + Backlog.printBacklog());
 
     for (int i = 0; i < currentBacklogSize; i++) {
-      String currentLink = backlog.pop();
-      System.out.println(" -- Current link: " + currentLink);
+      currentNode = Backlog.pop();
+      System.out.println(" -- Current wiki page: " + currentNode.name);
 
-      if (currentLink.equals(targetLink)) {
-        return successMessage();
+      if (currentNode.name.equals(targetPage)) {
+        return successMessage(currentNode.pathToNode);
       }
 
-      WikiPage currentPage = new WikiPage(currentLink);
+      currentNode.addNeighbors();
 
-      // Add all links in current page to backlog - to be checked
-      backlog.addAll(currentPage.getLinks());
-      System.out.println("    Added " + String.valueOf(currentPage.getLinks().size()) + " links to backlog from wiki page " + currentLink);
+      int backlogChange = 0;
+      for (WikiNode n : currentNode.neighbors) {
+        if (!Backlog.addedBefore(n.name)) {
+          Backlog.add(n);
+          backlogChange++;
+        }
+      }
+
+      System.out.println("    Added " + String.valueOf(backlogChange) + " links to backlog from wiki page " + currentNode.name);
     }
 
     level += 1;
-
     return search();
   }
 
-  String successMessage() {
+  private String successMessage(LinkedList<String> path) {
     String time = String.format("Time taken: %s ms", System.currentTimeMillis() - startTime);
 
     String linkString = (level == 1) ? "link" : "links";
-    String message = String.format("%s and %s are %s %s away", startLink, targetLink, String.valueOf(level), linkString);
-
-    // TODO: return path taken to go from start to finish
-    String path = "";
+    String message = String.format("%s and %s are %s %s away", startingPage, targetPage, String.valueOf(level), linkString);
 
     return String.format("%s\n%s\n%s", time, message, path);
   }

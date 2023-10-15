@@ -6,23 +6,13 @@ import org.jsoup.nodes.*;
 import org.jsoup.select.Elements;
 
 public class WikiPage {
-	String wikiBaseUrl = "https://en.wikipedia.org";
-	String wikiSubPath = "/wiki/";
-	String title;
+	static String wikiBaseUrl = "https://en.wikipedia.org";
+	static String wikiSubPath = "/wiki/";
 
-	private LinkedList<String> links = new LinkedList<String>();
+	public static LinkedList<String> getLinks(String endPath) {
+		String url = wikiBaseUrl + wikiSubPath + endPath;
+		LinkedList<String> links = new LinkedList<String>();
 
-	public WikiPage(String endPath) {
-		title = endPath;
-		parsePage();		
-	}
-
-	public LinkedList<String> getLinks() {
-		return links;
-	}
-
-	private void parsePage() {
-		String url = wikiBaseUrl + wikiSubPath + title;
 		try {
 				Document doc = Jsoup.connect(url).get();
 				Element body = doc.body();
@@ -39,17 +29,13 @@ public class WikiPage {
 
 					urls.forEach(u -> {
 						u = u.substring(wikiSubPath.length());
-
-						// Only add to links if it's not in backlog yet
-						if (!BacklogHistory.contains(u)) {
-							links.addLast(u);
-							BacklogHistory.add(u);
-						}
+						links.add(u);
 					});
 				}
-
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+
+		return links;
 	}
 }
