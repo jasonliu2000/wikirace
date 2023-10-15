@@ -51,11 +51,11 @@ public class WikiGraph {
     startTime = System.currentTimeMillis();
     System.out.println("!!!!! LEVEL = " + String.valueOf(level) + " !!!!!");
 
-    int currentBacklogSize = queueSize();
-    System.out.println("Current backlog size: " + currentBacklogSize);
-    System.out.println("Backlog items: " + printQueue());
+    int currentQueueSize = queueSize();
+    System.out.println("Current queue size: " + currentQueueSize);
+    System.out.println("Items in queue: " + printQueue());
 
-    for (int i = 0; i < currentBacklogSize; i++) {
+    for (int i = 0; i < currentQueueSize; i++) {
       currentNode = popNode();
       System.out.println(" -- Current wiki page: " + currentNode.name);
 
