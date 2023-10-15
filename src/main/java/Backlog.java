@@ -2,7 +2,8 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
 /*
- * This is a singleton class containing the backlog of nodes to visit and a history of nodes (by name) that have been added to our backlog before
+ * This is a singleton class containing the backlog of nodes to visit and a
+ * history of nodes (by name) that have been added to our backlog before
  */
 class Backlog {
   private static LinkedHashSet<String> history = new LinkedHashSet<String>();
@@ -30,10 +31,6 @@ class Backlog {
   static void add(WikiNode node) {
     backlog.add(node);
     history.add(node.name);
-  }
-
-  static void addAll(LinkedList<WikiNode> nodes) {
-    backlog.addAll(nodes);
   }
 
   static WikiNode pop() {
