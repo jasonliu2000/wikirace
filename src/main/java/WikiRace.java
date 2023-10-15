@@ -6,11 +6,11 @@ public class WikiRace {
     }
 
     String start = args[0];
-    String finish = args[1];
+    String destination = args[1];
 
-    System.out.println("We want to go from wiki page " + start + " to wiki page " + finish);
+    System.out.println("We want to go from wiki page " + start + " to wiki page " + destination);
 
-    WikiGraph graph = new WikiGraph(start, finish);
+    WikiGraph graph = new WikiGraph(start, destination);
     System.out.println(graph.search());
   }
 }

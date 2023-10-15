@@ -1,6 +1,10 @@
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
 public class WikiGraph {
+  private static LinkedHashSet<String> history = new LinkedHashSet<String>();
+  private static LinkedList<WikiNode> queue = new LinkedList<WikiNode>();
+  
   long startTime;
   String startingPage;
   String destinationPage;
@@ -9,23 +13,50 @@ public class WikiGraph {
   int level = 0;
 
   public WikiGraph(String start, String finish) {
-    startTime = System.currentTimeMillis();
+    
     startingPage = start;
     destinationPage = finish;
 
     WikiNode startNode = new WikiNode(startingPage);
-    Backlog.add(startNode);
+    addNode(startNode);
+  }
+
+  static boolean addedBefore(String link) {
+    return history.contains(link);
+  }
+
+  static int queueSize() {
+    return queue.size();
+  }
+
+  static String printQueue() {
+    LinkedList<String> names = new LinkedList<String>();
+    for (WikiNode n : queue) {
+      names.add(n.name);
+    }
+
+    return names.toString();
+  }
+
+  static void addNode(WikiNode node) {
+    queue.add(node);
+    history.add(node.name);
+  }
+
+  static WikiNode popNode() {
+    return queue.pop();
   }
 
   public String search() {
+    startTime = System.currentTimeMillis();
     System.out.println("!!!!! LEVEL = " + String.valueOf(level) + " !!!!!");
 
-    int currentBacklogSize = Backlog.size();
+    int currentBacklogSize = queueSize();
     System.out.println("Current backlog size: " + currentBacklogSize);
-    System.out.println("Backlog items: " + Backlog.printBacklog());
+    System.out.println("Backlog items: " + printQueue());
 
     for (int i = 0; i < currentBacklogSize; i++) {
-      currentNode = Backlog.pop();
+      currentNode = popNode();
       System.out.println(" -- Current wiki page: " + currentNode.name);
 
       if (currentNode.name.equals(destinationPage)) {
@@ -39,7 +70,7 @@ public class WikiGraph {
     return search();
   }
 
-  private String successMessage(LinkedList<String> visitedNodes) {
+  String successMessage(LinkedList<String> visitedNodes) {
     String time = String.format("Time taken: %s ms", System.currentTimeMillis() - startTime);
 
     String linkString = (level == 1) ? "link" : "links";

@@ -22,9 +22,9 @@ public class WikiNode {
 
     int backlogChange = 0;
     for (String l : links) {
-      if (!Backlog.addedBefore(l)) {
+      if (!WikiGraph.addedBefore(l)) {
         WikiNode neighborNode = new WikiNode(l, pathToNode);
-        Backlog.add(neighborNode);
+        WikiGraph.addNode(neighborNode);
         backlogChange++;
       }
     }
