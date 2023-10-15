@@ -1,8 +1,8 @@
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 public class WikiGraph {
-  private static LinkedHashSet<String> history = new LinkedHashSet<String>();
+  private static HashSet<String> history = new HashSet<String>();
   private static LinkedList<WikiNode> queue = new LinkedList<WikiNode>();
   
   long startTime;
