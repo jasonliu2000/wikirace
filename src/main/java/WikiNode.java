@@ -2,7 +2,6 @@ import java.util.LinkedList;
 
 public class WikiNode {
   String name;
-  LinkedList<WikiNode> neighbors = new LinkedList<WikiNode>();
 
   // TODO: look into whether ArrayList might be better
   LinkedList<String> pathToNode = new LinkedList<String>();
@@ -18,11 +17,18 @@ public class WikiNode {
     pathToNode.add(name);
   }
 
-  void addNeighbors() {
+  void addNeighborsToBacklog() {
     LinkedList<String> links = WikiPage.getLinks(name);
-    links.forEach(l -> {
-      WikiNode neighborNode = new WikiNode(l, pathToNode);
-      this.neighbors.add(neighborNode);
-    });
+
+    int backlogChange = 0;
+    for (String l : links) {
+      if (!Backlog.addedBefore(l)) {
+        WikiNode neighborNode = new WikiNode(l, pathToNode);
+        Backlog.add(neighborNode);
+        backlogChange++;
+      }
+    }
+
+    System.out.println("    Added " + String.valueOf(backlogChange) + " links to backlog from wiki page " + name);
   }
 }

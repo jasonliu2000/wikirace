@@ -32,17 +32,7 @@ public class WikiTree {
         return successMessage(currentNode.pathToNode);
       }
 
-      currentNode.addNeighbors();
-
-      int backlogChange = 0;
-      for (WikiNode n : currentNode.neighbors) {
-        if (!Backlog.addedBefore(n.name)) {
-          Backlog.add(n);
-          backlogChange++;
-        }
-      }
-
-      System.out.println("    Added " + String.valueOf(backlogChange) + " links to backlog from wiki page " + currentNode.name);
+      currentNode.addNeighborsToBacklog();
     }
 
     level += 1;
