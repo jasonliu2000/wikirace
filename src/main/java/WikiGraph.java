@@ -1,6 +1,6 @@
 import java.util.LinkedList;
 
-public class WikiTree {
+public class WikiGraph {
   long startTime;
   String startingPage;
   String destinationPage;
@@ -8,7 +8,7 @@ public class WikiTree {
 
   int level = 0;
 
-  public WikiTree(String start, String finish) {
+  public WikiGraph(String start, String finish) {
     startTime = System.currentTimeMillis();
     startingPage = start;
     destinationPage = finish;

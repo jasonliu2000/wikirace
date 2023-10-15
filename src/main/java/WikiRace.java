@@ -10,7 +10,7 @@ public class WikiRace {
 
     System.out.println("We want to go from wiki page " + start + " to wiki page " + finish);
 
-    WikiTree tree = new WikiTree(start, finish);
-    System.out.println(tree.search());
+    WikiGraph graph = new WikiGraph(start, finish);
+    System.out.println(graph.search());
   }
 }
