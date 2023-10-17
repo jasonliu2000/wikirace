@@ -1,6 +1,7 @@
 import java.util.List;
 import java.util.LinkedList;
 
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.*;
 import org.jsoup.select.Elements;
@@ -9,11 +10,34 @@ public class WikiPage {
 	static String wikiBaseUrl = "https://en.wikipedia.org";
 	static String wikiSubPath = "/wiki/";
 
-	public static LinkedList<String> getLinks(String endPath) {
-		String url = wikiBaseUrl + wikiSubPath + endPath;
+	private static String getUrl(String identifier) {
+		return wikiBaseUrl + wikiSubPath + identifier;
+	}
+
+	public static boolean exists(String article) {
+		String url = getUrl(article);
+		try {
+			Connection connection = Jsoup.connect(url);
+			connection.method(Connection.Method.GET);
+
+			Connection.Response response = connection.execute();
+			if (response.statusCode() == 200) {
+				return true;
+			}
+		} catch (Exception toBeIgnored) {
+			// Ignore 404s but have to handle other possible exceptions
+		}
+
+		return false;
+	}
+
+	public static LinkedList<String> getLinks(String article) {
+		String url = getUrl(article);
 		LinkedList<String> links = new LinkedList<String>();
 
 		try {
+				// Connection connection = Jsoup.connect(url);
+				// Document doc = connection.get();
 				Document doc = Jsoup.connect(url).get();
 				Element body = doc.body();
 
