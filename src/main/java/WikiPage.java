@@ -36,26 +36,26 @@ public class WikiPage {
 		LinkedList<String> links = new LinkedList<String>();
 
 		try {
-				// Connection connection = Jsoup.connect(url);
-				// Document doc = connection.get();
-				Document doc = Jsoup.connect(url).get();
-				Element body = doc.body();
+			// Connection connection = Jsoup.connect(url);
+			// Document doc = connection.get();
+			Document doc = Jsoup.connect(url).get();
+			Element body = doc.body();
 
-				Elements paragraphs = body.select("p");
-				for (Element p : paragraphs) {
-					Elements hyperlinks = p.select("a");
+			Elements paragraphs = body.select("p");
+			for (Element p : paragraphs) {
+				Elements hyperlinks = p.select("a");
 
-					List<String> urls = hyperlinks.eachAttr("href");
-					urls.removeIf(u -> !u.startsWith(wikiSubPath));
-					urls.removeIf(u -> u.endsWith("Citation_needed"));
-					// TODO: consider removing subcategory fragment in urls
-					// ex. "/wiki/White_paper#In_government" should be changed to "/wiki/White_paper"
+				List<String> urls = hyperlinks.eachAttr("href");
+				urls.removeIf(u -> !u.startsWith(wikiSubPath));
+				urls.removeIf(u -> u.endsWith("Citation_needed"));
+				// TODO: consider removing subcategory fragment in urls
+				// ex. "/wiki/White_paper#In_government" should be changed to "/wiki/White_paper"
 
-					urls.forEach(u -> {
-						u = u.substring(wikiSubPath.length());
-						links.add(u);
-					});
-				}
+				urls.forEach(u -> {
+					u = u.substring(wikiSubPath.length());
+					links.add(u);
+				});
+			}
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
