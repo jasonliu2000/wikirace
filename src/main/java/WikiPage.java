@@ -36,8 +36,6 @@ public class WikiPage {
 		LinkedList<String> links = new LinkedList<String>();
 
 		try {
-			// Connection connection = Jsoup.connect(url);
-			// Document doc = connection.get();
 			Document doc = Jsoup.connect(url).get();
 			Element body = doc.body();
 
