@@ -14,8 +14,8 @@ public class WikiPage {
 		return wikiBaseUrl + wikiSubPath + identifier;
 	}
 
-	public static boolean exists(String article) {
-		String url = getUrl(article);
+	public static boolean exists(String page) {
+		String url = getUrl(page);
 		try {
 			Connection connection = Jsoup.connect(url);
 			connection.method(Connection.Method.GET);
@@ -31,8 +31,8 @@ public class WikiPage {
 		return false;
 	}
 
-	public static LinkedList<String> getLinks(String article) {
-		String url = getUrl(article);
+	public static LinkedList<String> getLinks(String page) {
+		String url = getUrl(page);
 		LinkedList<String> links = new LinkedList<String>();
 
 		try {
