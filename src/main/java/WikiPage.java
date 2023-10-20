@@ -46,9 +46,6 @@ public class WikiPage {
 				List<String> urls = hyperlinks.eachAttr("href");
 				urls.removeIf(u -> !u.startsWith(wikiSubPath));
 				urls.removeIf(u -> u.endsWith("Citation_needed"));
-				// TODO: consider removing subcategory fragment in urls
-				// ex. "/wiki/White_paper#In_government" should be changed to "/wiki/White_paper"
-
 				urls.forEach(u -> {
 					u = u.substring(wikiSubPath.length());
 					links.add(u);
