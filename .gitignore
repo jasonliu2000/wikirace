@@ -1,4 +1,5 @@
 .vscode/
+docs/
 
 # Maven-related
 target/
