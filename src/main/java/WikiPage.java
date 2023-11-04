@@ -1,4 +1,3 @@
-import java.util.List;
 import java.util.LinkedList;
 
 import org.jsoup.Connection;
@@ -34,22 +33,30 @@ public class WikiPage {
 	public static LinkedList<String> getLinks(String page) {
 		String url = getUrl(page);
 		LinkedList<String> links = new LinkedList<String>();
-
+		
 		try {
 			Document doc = Jsoup.connect(url).get();
-			Element body = doc.body();
+			Element body = doc.body()
+												.select("#mw-content-text .mw-parser-output")
+												.first();
+			
+			Element terminateTag = body.select("#See_also").first(); // this gets the h2 element containing "See also"
+			if (terminateTag == null) {
+				terminateTag = body.select("#Notes").first();
+			}
+			if (terminateTag == null) {
+				terminateTag = body.select("#References").first();
+			}
+			if (terminateTag != null) {
+				terminateTag.parent().nextElementSiblings().remove();
+			}
 
-			Elements paragraphs = body.select("p");
-			for (Element p : paragraphs) {
-				Elements hyperlinks = p.select("a");
+			Elements aTags = body.getElementsByAttributeValueMatching("href", "^/wiki/(?!(?:File:|Special:|Template:|Template_talk:|Wikipedia:)).*");
 
-				List<String> urls = hyperlinks.eachAttr("href");
-				urls.removeIf(u -> !u.startsWith(wikiSubPath));
-				urls.removeIf(u -> u.endsWith("Citation_needed"));
-				urls.forEach(u -> {
-					u = u.substring(wikiSubPath.length());
-					links.add(u);
-				});
+			for (Element a : aTags) {
+				String urlPath = a.attr("href");
+				urlPath = urlPath.substring(wikiSubPath.length());
+				links.add(urlPath);
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
