@@ -1,5 +1,6 @@
 .vscode/
 docs/
+*.log
 
 # Maven-related
 target/

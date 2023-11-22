@@ -1,7 +1,10 @@
+import java.util.logging.Logger;
 import java.util.LinkedList;
 
 public class WikiNode {
   String name;
+
+  private static final Logger logger = Logger.getLogger(Constants.LOGGER);
 
   // TODO: look into whether ArrayList might be better
   LinkedList<String> pathToNode = new LinkedList<String>();
@@ -29,6 +32,6 @@ public class WikiNode {
       }
     }
 
-    System.out.println("    Added " + String.valueOf(backlogChange) + " links to backlog from wiki page " + name);
+    logger.info("    Added " + String.valueOf(backlogChange) + " links to backlog from wiki page " + name);
   }
 }

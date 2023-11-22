@@ -1,7 +1,9 @@
+import java.util.logging.Logger;
 import java.util.HashSet;
 import java.util.LinkedList;
 
 public class WikiGraph {
+  private static final Logger logger = Logger.getLogger(Constants.LOGGER);
   private static HashSet<String> history = new HashSet<String>();
   private static LinkedList<WikiNode> queue = new LinkedList<WikiNode>();
   
@@ -49,15 +51,15 @@ public class WikiGraph {
 
   public String search() {
     startTime = System.currentTimeMillis();
-    System.out.println("!!!!! LEVEL = " + String.valueOf(level) + " !!!!!");
+    logger.info("!!!!! LEVEL = " + String.valueOf(level) + " !!!!!");
 
     int currentQueueSize = queueSize();
-    System.out.println("Current queue size: " + currentQueueSize);
-    System.out.println("Items in queue: " + printQueue());
+    logger.info("Current queue size: " + currentQueueSize);
+    logger.info("Items in queue: " + printQueue());
 
     for (int i = 0; i < currentQueueSize; i++) {
       currentNode = popNode();
-      System.out.println(" -- Current wiki page: " + currentNode.name);
+      logger.info(" -- Current wiki page: " + currentNode.name);
 
       if (currentNode.name.equals(destinationPage)) {
         return successMessage(currentNode.pathToNode);
