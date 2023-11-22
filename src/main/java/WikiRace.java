@@ -2,15 +2,15 @@ public class WikiRace {
 
   public static void main(String[] args) {
     if (args.length != 2) {
-      throw new IllegalArgumentException("Invalid number of arguments. Expected 2 (First is the starting page and second is the destination page)");
+      throw new IllegalArgumentException(Constants.EXPECT_TWO_ARGUMENTS);
     }
 
     if (!WikiPage.exists(args[0])) {
-      throw new IllegalArgumentException("Please enter a valid starting wiki page.");
+      throw new IllegalArgumentException(Constants.REQUIRE_VALID_START);
     }
 
     if (!WikiPage.exists(args[1])) {
-      throw new IllegalArgumentException("Please enter a valid destination wiki page.");
+      throw new IllegalArgumentException(Constants.REQUIRE_VALID_DESTINATION);
     }
 
     String start = args[0];
