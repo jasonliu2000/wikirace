@@ -34,8 +34,8 @@ public class WikiRace {
     String destination = args[1];
 
 		logger.info(String.format("We want to go from wiki page %s to wiki page %s", start, destination));
-    WikiGraph graph = new WikiGraph(start, destination);
-    logger.info(graph.search());
+    Search thread = new Search(start, destination);
+		thread.start();
 
 		if (fileHandler != null) {
 			fileHandler.close();
