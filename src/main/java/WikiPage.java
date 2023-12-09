@@ -40,7 +40,7 @@ public class WikiPage {
 												.select("#mw-content-text .mw-parser-output")
 												.first();
 			
-			Element terminateTag = body.select("#See_also").first(); // this gets the h2 element containing "See also"
+			Element terminateTag = body.select("#See_also").first();
 			if (terminateTag == null) {
 				terminateTag = body.select("#Notes").first();
 			}
@@ -51,7 +51,7 @@ public class WikiPage {
 				terminateTag.parent().nextElementSiblings().remove();
 			}
 
-			Elements aTags = body.getElementsByAttributeValueMatching("href", "^/wiki/(?!(?:File:|Special:|Template:|Template_talk:|Wikipedia:)).*");
+			Elements aTags = body.getElementsByAttributeValueMatching("href", "^/wiki/(?!(?:File:|Special:|Template:|Template_talk:|Wikipedia:|Help:)).*");
 
 			for (Element a : aTags) {
 				String urlPath = a.attr("href");
