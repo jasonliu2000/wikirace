@@ -6,6 +6,7 @@ public class WikiGraph {
   private static final Logger logger = Logger.getLogger(Constants.LOGGER);
   private static HashSet<String> history = new HashSet<String>();
   private static LinkedList<WikiNode> queue = new LinkedList<WikiNode>();
+  private static HashSet<String> hints = new HashSet<String>();
   
   long startTime;
   String startingPage;
@@ -15,9 +16,13 @@ public class WikiGraph {
   int level = 0;
 
   public WikiGraph(String start, String finish) {
-    
     startingPage = start;
     destinationPage = finish;
+
+		LinkedList<String> destinationLinks = WikiPage.getLinks(finish);
+		for (String link : destinationLinks) {
+			hints.add(link);
+		}
 
     WikiNode startNode = new WikiNode(startingPage);
     addNode(startNode);
@@ -41,7 +46,11 @@ public class WikiGraph {
   }
 
   static void addNode(WikiNode node) {
-    queue.add(node);
+    if (hints.contains(node.name)) {
+      queue.addFirst(node);
+    } else {
+      queue.add(node);
+    }
     history.add(node.name);
   }
 
