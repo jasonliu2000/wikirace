@@ -8,6 +8,7 @@ import org.jsoup.select.Elements;
 public class WikiPage {
 	static String wikiBaseUrl = "https://en.wikipedia.org";
 	static String wikiSubPath = "/wiki/";
+	static String aTagsRegex = "^/wiki/(?!(?:File:|Special:|Template:|Template_talk:|Wikipedia:|Help:)).*";
 
 	private static String getUrl(String identifier) {
 		return wikiBaseUrl + wikiSubPath + identifier;
@@ -51,7 +52,7 @@ public class WikiPage {
 				terminateTag.parent().nextElementSiblings().remove();
 			}
 
-			Elements aTags = body.getElementsByAttributeValueMatching("href", "^/wiki/(?!(?:File:|Special:|Template:|Template_talk:|Wikipedia:|Help:)).*");
+			Elements aTags = body.getElementsByAttributeValueMatching("href", aTagsRegex);
 
 			for (Element a : aTags) {
 				String urlPath = a.attr("href");
