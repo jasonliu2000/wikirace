@@ -1,5 +1,4 @@
 import java.util.LinkedList;
-
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.*;
@@ -40,13 +39,17 @@ public class WikiPage {
 			Element body = doc.body()
 												.select("#mw-content-text .mw-parser-output")
 												.first();
+												
+			if (body.selectFirst(".infobox") != null) {
+				body.selectFirst(".infobox").remove();
+			}
 			
-			Element terminateTag = body.select("#See_also").first();
+			Element terminateTag = body.selectFirst("#See_also");
 			if (terminateTag == null) {
-				terminateTag = body.select("#Notes").first();
+				terminateTag = body.selectFirst("#Notes");
 			}
 			if (terminateTag == null) {
-				terminateTag = body.select("#References").first();
+				terminateTag = body.selectFirst("#References");
 			}
 			if (terminateTag != null) {
 				terminateTag.parent().nextElementSiblings().remove();
