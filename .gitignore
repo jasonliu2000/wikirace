@@ -1,6 +1,6 @@
 .vscode/
 docs/
-*.log
+*.log*
 .DS_Store
 
 # Maven-related
