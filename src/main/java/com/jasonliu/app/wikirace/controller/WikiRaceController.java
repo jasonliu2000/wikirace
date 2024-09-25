@@ -1,4 +1,5 @@
 package com.jasonliu.app.wikirace.controller;
+import java.net.URI;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
@@ -7,7 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import com.jasonliu.app.wikirace.wiki.WikiRace;
 
@@ -22,12 +25,14 @@ public class WikiRaceController {
 	}
 
 	@PostMapping("/wikirace")
-	public String startWikirace(@RequestParam String start, @RequestParam String destination) {
+	public ResponseEntity<String> startWikirace(@RequestParam String start, @RequestParam String destination) {
 		try {
-			// logger.info("it's starting...");
 			new WikiRace(start, destination);
-			// logger.info("it's started...");
-			return "success";
+
+			URI location = new URI("/job/0");
+			HttpHeaders responseHeaders = new HttpHeaders();
+   		responseHeaders.setLocation(location);
+			return new ResponseEntity<String>("Wikirace started", responseHeaders, HttpStatus.CREATED);
 			
 		} catch (Exception e) {
 			throw new ArticleNotFoundException();
