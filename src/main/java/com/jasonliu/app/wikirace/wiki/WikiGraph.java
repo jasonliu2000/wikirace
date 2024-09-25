@@ -1,4 +1,8 @@
+package com.jasonliu.app.wikirace.wiki;
 import java.util.logging.Logger;
+
+import com.jasonliu.app.wikirace.Constants;
+
 import java.util.HashSet;
 import java.util.LinkedList;
 
@@ -18,12 +22,6 @@ public class WikiGraph {
   public WikiGraph(String start, String finish) {
     startingPage = start;
     destinationPage = finish;
-
-		LinkedList<String> destinationLinks = WikiPage.getLinks(finish);
-		for (String link : destinationLinks) {
-			hints.add(link);
-		}
-
     WikiNode startNode = new WikiNode(startingPage);
     addNode(startNode);
   }
@@ -59,6 +57,13 @@ public class WikiGraph {
   }
 
   public String search() {
+    if (level == 0) {
+      LinkedList<String> destinationLinks = WikiPage.getLinks(destinationPage);
+      for (String link : destinationLinks) {
+        hints.add(link);
+      }
+    }
+
     startTime = System.currentTimeMillis();
     logger.info("!!!!! LEVEL = " + String.valueOf(level) + " !!!!!");
 
@@ -68,8 +73,6 @@ public class WikiGraph {
 
     for (int i = 0; i < currentQueueSize; i++) {
       currentNode = popNode();
-      logger.info(" -- Current wiki page: " + currentNode.name);
-
       if (currentNode.name.equals(destinationPage)) {
         return successMessage(currentNode.pathToNode);
       }

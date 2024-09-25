@@ -1,3 +1,4 @@
+package com.jasonliu.app.wikirace.wiki;
 import java.util.LinkedList;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;

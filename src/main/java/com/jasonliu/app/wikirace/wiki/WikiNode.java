@@ -1,4 +1,8 @@
+package com.jasonliu.app.wikirace.wiki;
 import java.util.logging.Logger;
+
+import com.jasonliu.app.wikirace.Constants;
+
 import java.util.LinkedList;
 
 public class WikiNode {

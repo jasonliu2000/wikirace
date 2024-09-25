@@ -1,4 +1,7 @@
+package com.jasonliu.app.wikirace.wiki;
 import java.util.logging.Logger;
+
+import com.jasonliu.app.wikirace.Constants;
 
 public class Search extends Thread {
   private static final Logger logger = Logger.getLogger(Constants.LOGGER);

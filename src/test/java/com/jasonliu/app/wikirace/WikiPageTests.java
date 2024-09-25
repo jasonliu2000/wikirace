@@ -1,8 +1,11 @@
+package com.jasonliu.app.wikirace;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import com.jasonliu.app.wikirace.wiki.WikiPage;
 
 public class WikiPageTests
 {   

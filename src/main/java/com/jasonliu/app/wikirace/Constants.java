@@ -1,3 +1,5 @@
+package com.jasonliu.app.wikirace;
+
 public final class Constants {
   private Constants() {}
 
