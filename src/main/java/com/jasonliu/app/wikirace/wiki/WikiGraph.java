@@ -57,7 +57,7 @@ public class WikiGraph {
   }
 
   public String search() {
-    if (level == 0) {
+    if (level == 1) {
       LinkedList<String> destinationLinks = WikiPage.getLinks(destinationPage);
       for (String link : destinationLinks) {
         hints.add(link);
