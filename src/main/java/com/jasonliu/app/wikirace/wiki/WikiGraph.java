@@ -24,6 +24,7 @@ public class WikiGraph {
     destinationPage = finish;
     WikiNode startNode = new WikiNode(startingPage);
     addNode(startNode);
+    search();
   }
 
   static boolean addedBefore(String link) {
@@ -74,6 +75,7 @@ public class WikiGraph {
     for (int i = 0; i < currentQueueSize; i++) {
       currentNode = popNode();
       if (currentNode.name.equals(destinationPage)) {
+        logger.info(successMessage(currentNode.pathToNode));
         return successMessage(currentNode.pathToNode);
       }
 

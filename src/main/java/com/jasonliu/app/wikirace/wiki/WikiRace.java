@@ -24,6 +24,10 @@ public class WikiRace {
       throw new IllegalArgumentException(Constants.REQUIRE_VALID_START);
     }
 
+		if (start == destination) {
+			// return early
+		}
+
     if (!WikiPage.exists(destination)) {
 			logger.severe(Constants.REQUIRE_VALID_DESTINATION);
       throw new IllegalArgumentException(Constants.REQUIRE_VALID_DESTINATION);

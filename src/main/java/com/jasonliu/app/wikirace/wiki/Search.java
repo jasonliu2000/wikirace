@@ -14,7 +14,7 @@ public class Search extends Thread {
   }
 
   public void run() {
+    logger.info(String.format("Thread %s is running", Thread.currentThread().getId()));
     WikiGraph graph = new WikiGraph(start, destination);
-    logger.info(graph.search());
   }
 }

@@ -21,6 +21,7 @@ import com.jasonliu.app.wikirace.wiki.WikiRace;
 public class WikiRaceController {
 	// private static final Logger logger = Logger.getLogger("WikiRaceGlobalLogger");
 	private final AtomicLong counter = new AtomicLong();
+	private static WikiRace wikirace;
 
 	@GetMapping("/ping")
 	public Ping ping() {
@@ -49,7 +50,7 @@ public class WikiRaceController {
 	@PostMapping("/wikirace")
 	public ResponseEntity<String> startWikirace(@RequestParam String start, @RequestParam String destination) {
 		try {
-			new WikiRace(start, destination);
+			wikirace = new WikiRace(start, destination);
 
 			URI location = new URI("/wikirace");
 			HttpHeaders responseHeaders = new HttpHeaders();
