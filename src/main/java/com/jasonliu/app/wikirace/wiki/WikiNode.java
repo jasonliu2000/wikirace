@@ -24,18 +24,18 @@ public class WikiNode {
     pathToNode.add(name);
   }
 
-  void addNeighborsToBacklog() {
-    LinkedList<String> links = WikiPage.getLinks(name);
+  // void addNeighborsToBacklog() {
+  //   LinkedList<String> links = WikiPage.getLinks(name);
 
-    int backlogChange = 0;
-    for (String l : links) {
-      if (!WikiGraph.addedBefore(l)) {
-        WikiNode neighborNode = new WikiNode(l, pathToNode);
-        WikiGraph.addNode(neighborNode);
-        backlogChange++;
-      }
-    }
+  //   int backlogChange = 0;
+  //   for (String l : links) {
+  //     if (!WikiGraph.addedBefore(l)) {
+  //       WikiNode neighborNode = new WikiNode(l, pathToNode);
+  //       WikiGraph.addNode(neighborNode);
+  //       backlogChange++;
+  //     }
+  //   }
 
-    logger.info("    Added " + String.valueOf(backlogChange) + " links to backlog from wiki page " + name);
-  }
+  //   logger.info("    Added " + String.valueOf(backlogChange) + " links to backlog from wiki page " + name);
+  // }
 }

@@ -19,7 +19,7 @@ import com.jasonliu.app.wikirace.wiki.WikiRace;
 
 @RestController
 public class WikiRaceController {
-	// private static final Logger logger = Logger.getLogger("WikiRaceGlobalLogger");
+	private static final Logger logger = Logger.getLogger("WikiRaceGlobalLogger");
 	private final AtomicLong counter = new AtomicLong();
 	private static WikiRace wikirace;
 
@@ -50,14 +50,17 @@ public class WikiRaceController {
 	@PostMapping("/wikirace")
 	public ResponseEntity<String> startWikirace(@RequestParam String start, @RequestParam String destination) {
 		try {
-			wikirace = new WikiRace(start, destination);
+			wikirace = WikiRace.initiate(start, destination);
+			wikirace.start();
 
-			URI location = new URI("/wikirace");
+			URI location = new URI("/wikirace"); // this can throw an exception
 			HttpHeaders responseHeaders = new HttpHeaders();
    		responseHeaders.setLocation(location);
 			return new ResponseEntity<String>("Request accepted. Starting the wikirace now.", responseHeaders, HttpStatus.ACCEPTED);
 			
 		} catch (Exception e) {
+			e.printStackTrace();
+			// switch case for possible exceptions
 			throw new ArticleNotFoundException();
 		}
 	}

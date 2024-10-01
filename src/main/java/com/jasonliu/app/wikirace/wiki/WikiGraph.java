@@ -24,7 +24,7 @@ public class WikiGraph {
     destinationPage = finish;
     WikiNode startNode = new WikiNode(startingPage);
     addNode(startNode);
-    search();
+    // search();
   }
 
   static boolean addedBefore(String link) {
@@ -57,34 +57,34 @@ public class WikiGraph {
     return queue.pop();
   }
 
-  public String search() {
-    if (level == 1) {
-      LinkedList<String> destinationLinks = WikiPage.getLinks(destinationPage);
-      for (String link : destinationLinks) {
-        hints.add(link);
-      }
-    }
+  // public String search() {
+  //   if (level == 1) {
+  //     LinkedList<String> destinationLinks = WikiPage.getLinks(destinationPage);
+  //     for (String link : destinationLinks) {
+  //       hints.add(link);
+  //     }
+  //   }
 
-    startTime = System.currentTimeMillis();
-    logger.info("!!!!! LEVEL = " + String.valueOf(level) + " !!!!!");
+  //   startTime = System.currentTimeMillis();
+  //   logger.info("!!!!! LEVEL = " + String.valueOf(level) + " !!!!!");
 
-    int currentQueueSize = queueSize();
-    logger.info("Current queue size: " + currentQueueSize);
-    logger.info("Items in queue: " + printQueue());
+  //   int currentQueueSize = queueSize();
+  //   logger.info("Current queue size: " + currentQueueSize);
+  //   logger.info("Items in queue: " + printQueue());
 
-    for (int i = 0; i < currentQueueSize; i++) {
-      currentNode = popNode();
-      if (currentNode.name.equals(destinationPage)) {
-        logger.info(successMessage(currentNode.pathToNode));
-        return successMessage(currentNode.pathToNode);
-      }
+  //   for (int i = 0; i < currentQueueSize; i++) {
+  //     currentNode = popNode();
+  //     if (currentNode.name.equals(destinationPage)) {
+  //       logger.info(successMessage(currentNode.pathToNode));
+  //       return successMessage(currentNode.pathToNode);
+  //     }
 
-      currentNode.addNeighborsToBacklog();
-    }
+  //     currentNode.addNeighborsToBacklog();
+  //   }
 
-    level += 1;
-    return search();
-  }
+  //   level += 1;
+  //   return search();
+  // }
 
   String successMessage(LinkedList<String> visitedNodes) {
     String time = String.format("Time taken: %s ms", System.currentTimeMillis() - startTime);

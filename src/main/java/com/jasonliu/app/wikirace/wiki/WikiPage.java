@@ -1,14 +1,20 @@
 package com.jasonliu.app.wikirace.wiki;
+
 import java.util.LinkedList;
+import java.util.concurrent.Callable;
+
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.*;
 import org.jsoup.select.Elements;
 
-public class WikiPage {
+public class WikiPage implements Callable {
 	static String wikiBaseUrl = "https://en.wikipedia.org";
 	static String wikiSubPath = "/wiki/";
 	static String aTagsRegex = "^/wiki/(?!(?:File:|Special:|Template:|Template_talk:|Wikipedia:|Help:)).*";
+
+	String title;
+	LinkedList<String> pathToNode = new LinkedList<String>();
 
 	private static String getUrl(String identifier) {
 		return wikiBaseUrl + wikiSubPath + identifier;
@@ -31,8 +37,20 @@ public class WikiPage {
 		return false;
 	}
 
-	public static LinkedList<String> getLinks(String page) {
-		String url = getUrl(page);
+	public WikiPage(String title) {
+		this.title = title;
+		pathToNode.add(title);
+	}
+
+
+	public WikiPage(String title, LinkedList<String> pathHistory) {
+		this.title = title;
+		pathToNode.addAll(pathHistory);
+		pathToNode.add(title);
+	}
+
+	public LinkedList<String> call() {
+		String url = getUrl(title);
 		LinkedList<String> links = new LinkedList<String>();
 		
 		try {

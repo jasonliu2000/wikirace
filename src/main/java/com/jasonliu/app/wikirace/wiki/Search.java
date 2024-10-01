@@ -3,18 +3,26 @@ import java.util.logging.Logger;
 
 import com.jasonliu.app.wikirace.Constants;
 
-public class Search extends Thread {
+public class Search implements Runnable {
   private static final Logger logger = Logger.getLogger(Constants.LOGGER);
-  String start;
-  String destination;
+  WikiNode wikiNode;
   
-  Search(String start, String destination) {
-    this.start = start;
-    this.destination = destination;
+  Search(WikiNode wikiNode) {
+    logger.info(String.format("Search obj initiated for: %s", wikiNode.name));
+    this.wikiNode = wikiNode;
   }
 
   public void run() {
-    logger.info(String.format("Thread %s is running", Thread.currentThread().getId()));
-    WikiGraph graph = new WikiGraph(start, destination);
+    logger.info("RUN");
+    try {
+      
+      logger.info(String.format("Thread %s is running for wiki article %s", Thread.currentThread().getId(), wikiNode.name));
+      Thread.sleep(500);
+      logger.info(String.format("ADDING article %s to visited", wikiNode.name));
+      WikiRace.addNodeToVisited(wikiNode);
+    } catch (InterruptedException e) {
+        logger.info(String.format("EXCEPTION: %s", wikiNode.name));
+    }
+    // WikiPage.getLinks(...)
   }
 }
