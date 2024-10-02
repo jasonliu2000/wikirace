@@ -21,16 +21,16 @@ public class WikiRace extends Thread {
 
 	private long startTime;
 	private static String startingPage;
-  private static String destinationPage;
+  private static String targetPage;
 
 	// public static BlockingQueue<WikiNode> queue = new LinkedBlockingQueue<WikiNode>();
 	private static LinkedList<WikiNode> queue = new LinkedList<WikiNode>();
   private static HashSet<String> hints = new HashSet<String>();
 	private static HashSet<String> history = new HashSet<String>();
 
-	public static Boolean destinationReached;
+	private static Boolean targetReached;
 	
-  private WikiRace(String start, String destination) {
+  private WikiRace(String start, String target) {
 		try {
 			FileHandler fileHandler = new FileHandler("wikirace.log");
 			fileHandler.setFormatter(new SimpleFormatter());
@@ -44,28 +44,28 @@ public class WikiRace extends Thread {
       throw new IllegalArgumentException(Constants.REQUIRE_VALID_START);
     }
 
-		if (start == destination) {
+		if (start == target) {
 			// TODO: look into returning API response early?
 		}
 
-    if (!WikiPage.exists(destination)) {
-			logger.severe(Constants.REQUIRE_VALID_DESTINATION);
-      throw new IllegalArgumentException(Constants.REQUIRE_VALID_DESTINATION);
+    if (!WikiPage.exists(target)) {
+			logger.severe(Constants.REQUIRE_VALID_TARGET);
+      throw new IllegalArgumentException(Constants.REQUIRE_VALID_TARGET);
     }
 
 		startingPage = start;
-		destinationPage = destination;
-		destinationReached = false;
+		targetPage = target;
+		targetReached = false;
   }
 
-	public static WikiRace initiate(String start, String destination) {
-		wikirace = new WikiRace(start, destination);
+	public static WikiRace initiate(String start, String target) {
+		wikirace = new WikiRace(start, target);
 		return wikirace;
 	}
 
 	public void run() {
 		startTime = System.currentTimeMillis();
-		logger.info(String.format("We want to go from wiki page %s to wiki page %s", startingPage, destinationPage));
+		logger.info(String.format("We want to go from wiki page %s to wiki page %s", startingPage, targetPage));
 
 		WikiNode startNode = new WikiNode(startingPage);
 		addNode(startNode);
@@ -122,7 +122,7 @@ public class WikiRace extends Thread {
 		
 		logger.info("Done going thru queue");
 		logger.info(String.valueOf(queueVisited.size()));
-		logger.info(String.valueOf(destinationReached));
+		logger.info(String.valueOf(targetReached));
 		logger.info(String.valueOf(queueSize()));
 	}
 
@@ -139,8 +139,12 @@ public class WikiRace extends Thread {
     history.add(node.name);
   }
 
-  static synchronized WikiNode popNode() {
-		logger.info(String.format("pre-pop q: %s", queue));
-    return queue.pop();
-  }
+  // static synchronized WikiNode popNode() {
+	// 	logger.info(String.format("pre-pop q: %s", queue));
+  //   return queue.take();
+  // }
+
+	static targetFound() {
+		targetFound = true;
+	}
 }

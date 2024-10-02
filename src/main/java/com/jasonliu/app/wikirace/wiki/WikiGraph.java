@@ -14,14 +14,14 @@ public class WikiGraph {
   
   long startTime;
   String startingPage;
-  String destinationPage;
+  String targetPage;
   WikiNode currentNode;
 
   int level = 0;
 
   public WikiGraph(String start, String finish) {
     startingPage = start;
-    destinationPage = finish;
+    targetPage = finish;
     WikiNode startNode = new WikiNode(startingPage);
     addNode(startNode);
     // search();
@@ -59,8 +59,8 @@ public class WikiGraph {
 
   // public String search() {
   //   if (level == 1) {
-  //     LinkedList<String> destinationLinks = WikiPage.getLinks(destinationPage);
-  //     for (String link : destinationLinks) {
+  //     LinkedList<String> targetLinks = WikiPage.getLinks(targetPage);
+  //     for (String link : targetLinks) {
   //       hints.add(link);
   //     }
   //   }
@@ -74,7 +74,7 @@ public class WikiGraph {
 
   //   for (int i = 0; i < currentQueueSize; i++) {
   //     currentNode = popNode();
-  //     if (currentNode.name.equals(destinationPage)) {
+  //     if (currentNode.name.equals(targetPage)) {
   //       logger.info(successMessage(currentNode.pathToNode));
   //       return successMessage(currentNode.pathToNode);
   //     }
@@ -90,9 +90,9 @@ public class WikiGraph {
     String time = String.format("Time taken: %s ms", System.currentTimeMillis() - startTime);
 
     String linkString = (level == 1) ? "link" : "links";
-    String message = String.format("%s and %s are %s %s away", startingPage, destinationPage, String.valueOf(level), linkString);
+    String message = String.format("%s and %s are %s %s away", startingPage, targetPage, String.valueOf(level), linkString);
 
-    String path = "Path taken to reach destination wiki page: ";
+    String path = "Path taken to reach target wiki page: ";
     String[] pagesVisited = new String[visitedNodes.size()];
     for (int i = 0; i < pagesVisited.length; i++) {
       if (i < pagesVisited.length - 1) {

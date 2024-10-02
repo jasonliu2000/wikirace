@@ -24,6 +24,6 @@ public class WikiRaceTests
   // {
   //   Exception exception = assertThrows(IllegalArgumentException.class, () ->
   //   new WikiRace("Wikiracing", "PageNotFound"));
-  //   assertEquals("Please enter a valid destination wiki page.", exception.getMessage());
+  //   assertEquals("Please enter a valid target wiki page.", exception.getMessage());
   // }
 }

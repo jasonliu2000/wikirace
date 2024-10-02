@@ -48,9 +48,9 @@ public class WikiRaceController {
 	}
 
 	@PostMapping("/wikirace")
-	public ResponseEntity<String> startWikirace(@RequestParam String start, @RequestParam String destination) {
+	public ResponseEntity<String> startWikirace(@RequestParam String start, @RequestParam String target) {
 		try {
-			wikirace = WikiRace.initiate(start, destination);
+			wikirace = WikiRace.initiate(start, target);
 			wikirace.start();
 
 			URI location = new URI("/wikirace"); // this can throw an exception
