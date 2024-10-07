@@ -19,6 +19,16 @@ public class Search implements Runnable {
       logger.info(String.format("Thread %s is running for wiki article %s", Thread.currentThread().getId(), wikiNode.name));
       Thread.sleep(500);
       logger.info(String.format("ADDING article %s to visited", wikiNode.name));
+      if (wikiNode.name == "Romania") {
+        WikiRace.addNode(new WikiNode("Australia"));
+        logger.info("aus added");
+      }
+
+      if (wikiNode.name == "Albania") {
+        logger.info("albania found !!!!!!");
+        WikiRace.targetFound();
+      }
+
       WikiRace.addNodeToVisited(wikiNode);
     } catch (InterruptedException e) {
         logger.info(String.format("EXCEPTION: %s", wikiNode.name));

@@ -6,9 +6,7 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.util.logging.FileHandler;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -23,12 +21,13 @@ public class WikiRace extends Thread {
 	private static String startingPage;
   private static String targetPage;
 
-	// public static BlockingQueue<WikiNode> queue = new LinkedBlockingQueue<WikiNode>();
-	private static LinkedList<WikiNode> queue = new LinkedList<WikiNode>();
+	public static BlockingQueue<WikiNode> queue = new LinkedBlockingQueue<WikiNode>();
+	// private static LinkedList<WikiNode> queue = new LinkedList<WikiNode>();
   private static HashSet<String> hints = new HashSet<String>();
 	private static HashSet<String> history = new HashSet<String>();
 
-	private static Boolean targetReached;
+	private static Boolean targetFound;
+	private static ExecutorService executor;
 	
   private WikiRace(String start, String target) {
 		try {
@@ -55,7 +54,7 @@ public class WikiRace extends Thread {
 
 		startingPage = start;
 		targetPage = target;
-		targetReached = false;
+		targetFound = false;
   }
 
 	public static WikiRace initiate(String start, String target) {
@@ -105,25 +104,29 @@ public class WikiRace extends Thread {
 	//
 
 	private void executeWikirace() {
-		ExecutorService executor = Executors.newFixedThreadPool(10); // Runtime.getRuntime().availableProcessors()
-		while (!destinationReached && queueSize() > 0) {
-			logger.info("looping...start");
-			WikiNode node = popNode();
-			executor.execute(new Search(node));
-			logger.info("looping...end");
-		}
-
-		executor.shutdown();
-		try {
-			executor.awaitTermination(10000, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {
-			logger.severe(e.getMessage());
-	}
+		executor = Executors.newSingleThreadExecutor(); //newFixedThreadPool(10); // Runtime.getRuntime().availableProcessors()
 		
-		logger.info("Done going thru queue");
-		logger.info(String.valueOf(queueVisited.size()));
-		logger.info(String.valueOf(targetReached));
-		logger.info(String.valueOf(queueSize()));
+		while (true) {
+			logger.info("looping...");
+			logger.info(String.format("thread status: %s", Thread.currentThread().getState()));
+			WikiNode node;
+			try {
+				node = queue.take();
+				// if (node.name == "poison") {
+				// 	logger.info("breaking out of while loop");
+				// 	break;
+				// }
+				executor.execute(new Search(node));
+			} catch (InterruptedException | RejectedExecutionException e) {
+				if (e.getClass().getName() == RejectedExecutionException.class.getName()) {
+					break;
+				} else {
+					logger.severe(e.getMessage());
+				}
+			}
+			
+			logger.info("looped");
+		}
 	}
 
 	static synchronized int queueSize() {
@@ -131,12 +134,12 @@ public class WikiRace extends Thread {
   }
 
 	static synchronized void addNode(WikiNode node) {
-    // if (hints.contains(node.name)) {
-    //   queue.addFirst(node);
-    // } else {
-      queue.add(node);
-    // }
-    history.add(node.name);
+		try {
+      queue.put(node);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
+    // history.add(node.name);
   }
 
   // static synchronized WikiNode popNode() {
@@ -144,7 +147,26 @@ public class WikiRace extends Thread {
   //   return queue.take();
   // }
 
-	static targetFound() {
+	public static synchronized void targetFound() {
 		targetFound = true;
+		// addNode(new WikiNode("poison")); 
+		
+		// Thread.currentThread().interrupt();
+		// logger.info(String.format("thread interrupted!! status: %s", Thread.currentThread().isInterrupted()));
+
+		logger.info("THREAD INTERRUPTED");
+		logger.info(String.valueOf(targetFound));
+		logger.info(String.format("post while loop q size: %s", String.valueOf(queueSize())));
+
+		executor.shutdown();
+		try {
+			executor.awaitTermination(0, TimeUnit.MILLISECONDS); // pauses current thread from doing anything (ex. printing any log statements, whatever) until all current executor tasks finish (max 3 second wait)
+		} catch (InterruptedException e) {
+			logger.severe(e.getMessage());
+		}
+		
+		logger.info("Done going thru queue");
+		logger.info(String.valueOf(queueVisited.size()));
+		logger.info(String.valueOf(queueSize()));
 	}
 }
