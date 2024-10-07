@@ -1,6 +1,7 @@
 package com.jasonliu.app.wikirace.wiki;
 
 import com.jasonliu.app.wikirace.Constants;
+import com.jasonliu.app.wikirace.Constants.WikiraceStatus;
 
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -13,6 +14,9 @@ import java.util.LinkedList;
 
 public class WikiRace extends Thread {
 	private static WikiRace wikirace;
+	private static WikiraceStatus status = WikiraceStatus.NOT_STARTED;
+	private static String time;
+	private static String[] pathToTarget;
 
 	private static final Logger logger = Logger.getLogger(Constants.LOGGER);
 	private static FileHandler fileHandler;
@@ -30,6 +34,10 @@ public class WikiRace extends Thread {
 	private static ExecutorService executor;
 	
   private WikiRace(String start, String target) {
+		time = "";
+		pathToTarget = new String[]{};
+		status = WikiraceStatus.IN_PROGRESS;
+
 		try {
 			FileHandler fileHandler = new FileHandler("wikirace.log");
 			fileHandler.setFormatter(new SimpleFormatter());
@@ -39,12 +47,13 @@ public class WikiRace extends Thread {
 		}
 
     if (!WikiPage.exists(start)) {
+			// TODO: need to set status to FAILED whenever an error happens
 			logger.severe(Constants.REQUIRE_VALID_START);
       throw new IllegalArgumentException(Constants.REQUIRE_VALID_START);
     }
 
 		if (start == target) {
-			// TODO: look into returning API response early?
+			status = WikiraceStatus.COMPLETED;
 		}
 
     if (!WikiPage.exists(target)) {
@@ -90,8 +99,8 @@ public class WikiRace extends Thread {
 			fileHandler.close();
 		}
 
-		String time = String.format("Time taken: %s ms", System.currentTimeMillis() - startTime);
-		logger.info(time);
+		time = String.valueOf(System.currentTimeMillis() - startTime); // TODO: refactor into a setter method
+		logger.info(String.format("Time taken: %s ms", time));
 	}
 
 	// to delete
@@ -149,6 +158,7 @@ public class WikiRace extends Thread {
 
 	public static synchronized void targetFound() {
 		targetFound = true;
+		status = WikiraceStatus.COMPLETED;
 		// addNode(new WikiNode("poison")); 
 		
 		// Thread.currentThread().interrupt();
@@ -168,5 +178,17 @@ public class WikiRace extends Thread {
 		logger.info("Done going thru queue");
 		logger.info(String.valueOf(queueVisited.size()));
 		logger.info(String.valueOf(queueSize()));
+	}
+
+	public static WikiraceStatus getStatus() {
+		return status;
+	}
+
+	public static String getTimeDuration() {
+		return time;
+	}
+
+	public static String[] getPathToTarget() {
+		return pathToTarget;
 	}
 }

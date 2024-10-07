@@ -9,6 +9,6 @@ public final class Constants {
   public static final String REQUIRE_VALID_TARGET = "Please enter a valid target wiki page.";
 
   public static enum WikiraceStatus {
-    IN_PROGRESS, COMPLETED, FAILED
+    NOT_STARTED, IN_PROGRESS, COMPLETED, FAILED
   }
 }

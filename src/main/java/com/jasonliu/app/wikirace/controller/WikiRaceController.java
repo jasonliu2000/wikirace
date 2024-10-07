@@ -19,7 +19,7 @@ import com.jasonliu.app.wikirace.wiki.WikiRace;
 
 @RestController
 public class WikiRaceController {
-	private static final Logger logger = Logger.getLogger("WikiRaceGlobalLogger");
+	// private static final Logger logger = Logger.getLogger("WikiRaceGlobalLogger");
 	private final AtomicLong counter = new AtomicLong();
 	private static WikiRace wikirace;
 
@@ -28,20 +28,22 @@ public class WikiRaceController {
 		return new Ping(counter.incrementAndGet(), "pong");
 	}
 
-	@GetMapping("/wikirace/status/{counter}")
-	public Status getWikiraceStatus(@PathVariable int counter) {
-		WikiraceStatus testStatus = WikiraceStatus.FAILED;
-		switch (testStatus) {
+	@GetMapping("/wikirace/status")
+	public Status getWikiraceStatus() {
+		// consider if we want to set the status back to NOT_STARTED after a completed wikirace
+		switch (WikiRace.getStatus()) {
+			case NOT_STARTED:
+				throw new WikiraceNotStartedException();
 			case IN_PROGRESS:
-				return new Status(counter, 
-													"Wikirace is in progress.", 
+				return new Status("Wikirace is in progress.", 
 													"",
 													new String[]{});
 			case COMPLETED:
-				return new Status(counter,
-													"Wikirace has completed.",
-													"16000ms",
-													new String[]{"Wikiracing", "United_States", "Virginia"});
+				String duration = WikiRace.getTimeDuration();
+				String[] path = WikiRace.getPathToTarget();
+				return new Status("Wikirace has completed.",
+													duration,
+													path);
 			default:
 				throw new WikiraceException();
 		}
@@ -68,6 +70,8 @@ public class WikiRaceController {
 	@ResponseStatus(value=HttpStatus.BAD_REQUEST, reason="Wikipedia article not found.") // TODO: refactor to get reason to show up in http response
 	public class ArticleNotFoundException extends RuntimeException {}
 
-	public class WikiraceException extends RuntimeException {}
+	@ResponseStatus(value=HttpStatus.BAD_REQUEST)
+	public class WikiraceNotStartedException extends RuntimeException {}
 
+	public class WikiraceException extends RuntimeException {}
 }
