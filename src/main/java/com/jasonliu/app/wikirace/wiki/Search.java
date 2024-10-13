@@ -21,7 +21,8 @@ public class Search implements Runnable {
       Thread.sleep(500);
       logger.info(String.format("ADDING article %s to visited", wikiNode.name));
       if (wikiNode.name == "Romania") {
-        WikiRace.addNode(new WikiNode("Australia"));
+        WikiRace.addNodeToQueue(new WikiNode("Australia"));
+        WikiRace.addNodeToQueue(new WikiNode("Greece"));
         logger.info("aus added");
       }
 
@@ -29,8 +30,6 @@ public class Search implements Runnable {
         logger.info("found target");
         WikiRace.targetFound();
       }
-
-      WikiRace.addNodeToVisited(wikiNode);
     } catch (InterruptedException e) {
         logger.info(String.format("EXCEPTION: %s", wikiNode.name));
     }

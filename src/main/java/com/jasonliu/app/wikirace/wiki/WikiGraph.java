@@ -23,7 +23,7 @@ public class WikiGraph {
     startingPage = start;
     targetPage = finish;
     WikiNode startNode = new WikiNode(startingPage);
-    addNode(startNode);
+    addNodeToQueue(startNode);
     // search();
   }
 
@@ -44,7 +44,7 @@ public class WikiGraph {
     return names.toString();
   }
 
-  static void addNode(WikiNode node) {
+  static void addNodeToQueue(WikiNode node) {
     if (hints.contains(node.name)) {
       queue.addFirst(node);
     } else {

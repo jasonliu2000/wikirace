@@ -31,7 +31,7 @@ public class WikiNode {
   //   for (String l : links) {
   //     if (!WikiGraph.addedBefore(l)) {
   //       WikiNode neighborNode = new WikiNode(l, pathToNode);
-  //       WikiGraph.addNode(neighborNode);
+  //       WikiGraph.addNodeToQueue(neighborNode);
   //       backlogChange++;
   //     }
   //   }
