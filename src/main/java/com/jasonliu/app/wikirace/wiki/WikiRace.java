@@ -6,11 +6,8 @@ import com.jasonliu.app.wikirace.Constants.WikiraceStatus;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.util.logging.FileHandler;
-
 import java.util.concurrent.*;
-
 import java.util.HashSet;
-import java.util.LinkedList;
 
 public class WikiRace extends Thread {
 	private static WikiRace wikirace;
@@ -26,9 +23,8 @@ public class WikiRace extends Thread {
 	private static String[] pathToTarget;
 
 	public static BlockingQueue<WikiNode> queue = new LinkedBlockingQueue<WikiNode>();
-	// private static LinkedList<WikiNode> queue = new LinkedList<WikiNode>();
   private static HashSet<String> hints = new HashSet<String>();
-	private static HashSet<String> history = new HashSet<String>();
+	private static HashSet<String> queueHistory = new HashSet<String>();
 
 	private static Boolean targetFound;
 	private static ExecutorService executor;
@@ -39,7 +35,7 @@ public class WikiRace extends Thread {
 		status = WikiraceStatus.IN_PROGRESS;
 
 		try {
-			FileHandler fileHandler = new FileHandler("wikirace.log");
+			FileHandler fileHandler = new FileHandler(Constants.LOG_FILENAME);
 			fileHandler.setFormatter(new SimpleFormatter());
 			logger.addHandler(fileHandler);
 		} catch (Exception e) {
@@ -47,10 +43,8 @@ public class WikiRace extends Thread {
 		}
 
     if (!WikiPage.exists(start)) {
-			// TODO: need to set status to FAILED whenever an error happens
-			status = WikiraceStatus.FAILED;
+			setStatusFailed();
 			logger.severe(Constants.REQUIRE_VALID_START);
-      // throw new IllegalArgumentException(Constants.REQUIRE_VALID_START);
     }
 
 		if (start == target) {
@@ -58,8 +52,8 @@ public class WikiRace extends Thread {
 		}
 
     if (!WikiPage.exists(target)) {
+			setStatusFailed();
 			logger.severe(Constants.REQUIRE_VALID_TARGET);
-      // throw new IllegalArgumentException(Constants.REQUIRE_VALID_TARGET);
     }
 
 		startingPage = start;
@@ -77,23 +71,7 @@ public class WikiRace extends Thread {
 		logger.info(String.format("We want to go from wiki page %s to wiki page %s", startingPage, targetPage));
 
 		WikiNode startNode = new WikiNode(startingPage);
-		addNode(startNode);
-		addNode(new WikiNode("United_States"));
-		addNode(new WikiNode("United_Kingdom"));
-		addNode(new WikiNode("Greece"));
-		addNode(new WikiNode("Argentina"));
-		addNode(new WikiNode("France"));
-		addNode(new WikiNode("Mexico"));
-		addNode(new WikiNode("Peru"));
-		addNode(new WikiNode("Denmark"));
-		addNode(new WikiNode("Sweden"));
-		addNode(new WikiNode("Turkey"));
-		addNode(new WikiNode("Syria"));
-		addNode(new WikiNode("Albania"));
-		addNode(new WikiNode("Hungary"));
-		addNode(new WikiNode("Romania"));
-
-		logger.info(String.format("Initial queue size: %s", String.valueOf(queueSize())));
+		addNodeToQueue(startNode);
 		executeWikirace();
 
 		if (fileHandler != null) {
@@ -104,15 +82,6 @@ public class WikiRace extends Thread {
 		logger.info(String.format("Time taken: %s ms", time));
 	}
 
-	// to delete
-	// public static BlockingQueue<WikiNode> queueVisited = new LinkedBlockingQueue<WikiNode>();
-	private static LinkedList<WikiNode> queueVisited = new LinkedList<WikiNode>();
-	static synchronized void addNodeToVisited(WikiNode node) {
-      queueVisited.add(node);
-			logger.info(String.format("ADDED article %s to visited", node.name));
-  }
-	//
-
 	private void executeWikirace() {
 		executor = Executors.newSingleThreadExecutor(); //newFixedThreadPool(10); // Runtime.getRuntime().availableProcessors()
 		
@@ -120,15 +89,12 @@ public class WikiRace extends Thread {
 			WikiNode node;
 			try {
 				node = queue.take();
-				// if (node.name == "poison") {
-				// 	logger.info("breaking out of while loop");
-				// 	break;
-				// }
 				executor.execute(new Search(node, targetPage));
 			} catch (InterruptedException | RejectedExecutionException e) {
 				if (e.getClass().getName() == RejectedExecutionException.class.getName()) {
 					break;
 				} else {
+					setStatusFailed();
 					logger.severe(e.getMessage());
 				}
 			}
@@ -139,13 +105,15 @@ public class WikiRace extends Thread {
     return queue.size();
   }
 
-	static synchronized void addNode(WikiNode node) {
+	static synchronized void addNodeToQueue(WikiNode node) {
 		try {
-      queue.put(node);
+			if (queueHistory.add(node.name)) {
+				queue.put(node);
+			}
 		} catch (InterruptedException e) {
+			logger.severe(e.getMessage());
 			Thread.currentThread().interrupt();
 		}
-    // history.add(node.name);
   }
 
 	public static synchronized void targetFound() {
@@ -154,7 +122,7 @@ public class WikiRace extends Thread {
 
 		executor.shutdown();
 
-		// addNode(new WikiNode("poison")); 
+		// addNodeToQueue(new WikiNode("poison")); 
 		
 		// Thread.currentThread().interrupt();
 		// logger.info(String.format("thread interrupted!! status: %s", Thread.currentThread().isInterrupted()));
@@ -168,6 +136,10 @@ public class WikiRace extends Thread {
 
 	public static WikiraceStatus getStatus() {
 		return status;
+	}
+
+	private static void setStatusFailed() {
+		status = WikiraceStatus.FAILED;
 	}
 
 	public static String getTimeDuration() {

@@ -16,7 +16,6 @@ public class Search implements Runnable {
 
   public void run() {
     try {
-      
       logger.info(String.format("Thread %s is running for wiki article %s", Thread.currentThread().getId(), wikiNode.name));
       Thread.sleep(500);
       logger.info(String.format("ADDING article %s to visited", wikiNode.name));
@@ -32,6 +31,7 @@ public class Search implements Runnable {
       }
     } catch (InterruptedException e) {
         logger.info(String.format("EXCEPTION: %s", wikiNode.name));
+        logger.severe(String.format("thread interrupted when visiting article %s with the following message: %s", wikiNode.name, e.getMessage()));
     }
     // WikiPage.getLinks(...)
   }
