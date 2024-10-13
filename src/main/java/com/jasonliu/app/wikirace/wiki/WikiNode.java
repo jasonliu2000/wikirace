@@ -1,14 +1,10 @@
 package com.jasonliu.app.wikirace.wiki;
-import java.util.logging.Logger;
-
-import com.jasonliu.app.wikirace.Constants;
 
 import java.util.LinkedList;
 
 public class WikiNode {
   String name;
-
-  private static final Logger logger = Logger.getLogger(Constants.LOGGER);
+  LinkedList<WikiNode> childNodes = new LinkedList<WikiNode>();
 
   // TODO: look into whether ArrayList might be better
   LinkedList<String> pathToNode = new LinkedList<String>();
@@ -24,18 +20,17 @@ public class WikiNode {
     pathToNode.add(name);
   }
 
-  // void addNeighborsToBacklog() {
-  //   LinkedList<String> links = WikiPage.getLinks(name);
+  // May not be used, but keep for now
+  public LinkedList<WikiNode> getChildNodes() {
+    if (childNodes.size() > 0) {
+      return childNodes;
+    }
 
-  //   int backlogChange = 0;
-  //   for (String l : links) {
-  //     if (!WikiGraph.addedBefore(l)) {
-  //       WikiNode neighborNode = new WikiNode(l, pathToNode);
-  //       WikiGraph.addNodeToQueue(neighborNode);
-  //       backlogChange++;
-  //     }
-  //   }
+    LinkedList<String> links = WikiPage.getLinks(name);
+    for (String link : links) {
+      childNodes.add(new WikiNode(link, pathToNode));
+    }
 
-  //   logger.info("    Added " + String.valueOf(backlogChange) + " links to backlog from wiki page " + name);
-  // }
+    return childNodes;
+  }
 }
