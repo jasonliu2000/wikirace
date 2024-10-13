@@ -6,14 +6,15 @@ import com.jasonliu.app.wikirace.Constants;
 public class Search implements Runnable {
   private static final Logger logger = Logger.getLogger(Constants.LOGGER);
   WikiNode wikiNode;
+  String target;
   
-  Search(WikiNode wikiNode) {
+  Search(WikiNode wikiNode, String target) {
     logger.info(String.format("Search obj initiated for: %s", wikiNode.name));
     this.wikiNode = wikiNode;
+    this.target = target;
   }
 
   public void run() {
-    logger.info("RUN");
     try {
       
       logger.info(String.format("Thread %s is running for wiki article %s", Thread.currentThread().getId(), wikiNode.name));
@@ -24,8 +25,8 @@ public class Search implements Runnable {
         logger.info("aus added");
       }
 
-      if (wikiNode.name == "Albania") {
-        logger.info("albania found !!!!!!");
+      if (wikiNode.name.equals(target)) {
+        logger.info("found target");
         WikiRace.targetFound();
       }
 

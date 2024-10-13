@@ -124,7 +124,7 @@ public class WikiRace extends Thread {
 				// 	logger.info("breaking out of while loop");
 				// 	break;
 				// }
-				executor.execute(new Search(node));
+				executor.execute(new Search(node, targetPage));
 			} catch (InterruptedException | RejectedExecutionException e) {
 				if (e.getClass().getName() == RejectedExecutionException.class.getName()) {
 					break;
