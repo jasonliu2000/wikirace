@@ -20,12 +20,13 @@ import com.jasonliu.app.wikirace.wiki.WikiRace;
 @RestController
 public class WikiRaceController {
 	// private static final Logger logger = Logger.getLogger("WikiRaceGlobalLogger");
-	private final AtomicLong counter = new AtomicLong();
+	private final AtomicLong pongCounter = new AtomicLong();
+	private final AtomicLong wikiraceJobId = new AtomicLong();
 	private static WikiRace wikirace;
 
 	@GetMapping("/ping")
 	public Ping ping() {
-		return new Ping(counter.incrementAndGet(), "pong");
+		return new Ping(pongCounter.incrementAndGet(), "pong");
 	}
 
 	@GetMapping("/wikirace/status")
@@ -55,7 +56,7 @@ public class WikiRaceController {
 			wikirace = WikiRace.initiate(start, target);
 			wikirace.start();
 
-			URI location = new URI("/wikirace"); // this can throw an exception
+			URI location = new URI(String.format("/wikirace/%s", wikiraceJobId.incrementAndGet())); // this can throw an exception
 			HttpHeaders responseHeaders = new HttpHeaders();
    		responseHeaders.setLocation(location);
 			return new ResponseEntity<String>("Request accepted. Starting the wikirace now.", responseHeaders, HttpStatus.ACCEPTED);

@@ -5,8 +5,6 @@ import java.util.LinkedList;
 public class WikiNode {
   String name;
   LinkedList<WikiNode> childNodes = new LinkedList<WikiNode>();
-
-  // TODO: look into whether ArrayList might be better
   LinkedList<String> pathToNode = new LinkedList<String>();
 
   WikiNode(String link) {

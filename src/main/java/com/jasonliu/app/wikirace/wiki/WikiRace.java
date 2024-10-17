@@ -16,17 +16,16 @@ public class WikiRace extends Thread {
 	private static FileHandler fileHandler;
 
 	private static WikiraceStatus status = WikiraceStatus.NOT_STARTED;
-	private long startTime;
+	private static long startTime;
 	private static String time;
 	private static String startingPage;
   private static String targetPage;
 	private static String[] pathToTarget;
 
-	public static BlockingQueue<WikiNode> queue = new LinkedBlockingQueue<WikiNode>();
+	private static BlockingQueue<WikiNode> queue = new LinkedBlockingQueue<WikiNode>();
   private static HashSet<String> hints = new HashSet<String>();
 	private static HashSet<String> queueHistory = new HashSet<String>();
 
-	private static Boolean targetFound;
 	private static ExecutorService executor;
 	
   private WikiRace(String start, String target) {
@@ -58,7 +57,6 @@ public class WikiRace extends Thread {
 
 		startingPage = start;
 		targetPage = target;
-		targetFound = false;
   }
 
 	public static WikiRace initiate(String start, String target) {
@@ -77,9 +75,6 @@ public class WikiRace extends Thread {
 		if (fileHandler != null) {
 			fileHandler.close();
 		}
-
-		time = String.valueOf(System.currentTimeMillis() - startTime); // TODO: refactor into a setter method
-		logger.info(String.format("Time taken: %s ms", time));
 	}
 
 	private void executeWikirace() {
@@ -116,22 +111,13 @@ public class WikiRace extends Thread {
 		}
   }
 
-	public static synchronized void targetFound() {
-		targetFound = true;
-		status = WikiraceStatus.COMPLETED;
-
-		executor.shutdown();
-
-		// addNodeToQueue(new WikiNode("poison")); 
+	public static synchronized void targetFound(String[] pathTaken) {
+		time = String.valueOf(System.currentTimeMillis() - startTime); // TODO: refactor into a setter method
+		logger.info(String.format("Time taken: %s ms", time));
 		
-		// Thread.currentThread().interrupt();
-		// logger.info(String.format("thread interrupted!! status: %s", Thread.currentThread().isInterrupted()));
-
-		try {
-			executor.awaitTermination(0, TimeUnit.MILLISECONDS); // pauses current thread from doing anything (ex. printing any log statements, whatever) until all current executor tasks finish (max 3 second wait)
-		} catch (InterruptedException e) {
-			logger.severe(e.getMessage());
-		}
+		status = WikiraceStatus.COMPLETED;
+		pathToTarget = pathTaken;
+		executor.shutdown();
 	}
 
 	public static WikiraceStatus getStatus() {

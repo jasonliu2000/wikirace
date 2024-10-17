@@ -1,20 +1,14 @@
 package com.jasonliu.app.wikirace.wiki;
-
 import java.util.LinkedList;
-import java.util.concurrent.Callable;
-
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.*;
 import org.jsoup.select.Elements;
 
-public class WikiPage implements Callable {
+public class WikiPage {
 	static String wikiBaseUrl = "https://en.wikipedia.org";
 	static String wikiSubPath = "/wiki/";
 	static String aTagsRegex = "^/wiki/(?!(?:File:|Special:|Template:|Template_talk:|Wikipedia:|Help:)).*";
-
-	String title;
-	LinkedList<String> pathToNode = new LinkedList<String>();
 
 	private static String getUrl(String identifier) {
 		return wikiBaseUrl + wikiSubPath + identifier;
@@ -37,20 +31,8 @@ public class WikiPage implements Callable {
 		return false;
 	}
 
-	public WikiPage(String title) {
-		this.title = title;
-		pathToNode.add(title);
-	}
-
-
-	public WikiPage(String title, LinkedList<String> pathHistory) {
-		this.title = title;
-		pathToNode.addAll(pathHistory);
-		pathToNode.add(title);
-	}
-
-	public LinkedList<String> call() {
-		String url = getUrl(title);
+	public static LinkedList<String> getLinks(String page) {
+		String url = getUrl(page);
 		LinkedList<String> links = new LinkedList<String>();
 		
 		try {
@@ -61,6 +43,11 @@ public class WikiPage implements Callable {
 												
 			if (body.selectFirst(".infobox") != null) {
 				body.selectFirst(".infobox").remove();
+			}
+
+			Elements notes = body.select("div[role=note]");
+			for (Element note : notes) {
+				note.remove();
 			}
 			
 			Element terminateTag = body.selectFirst("#See_also");

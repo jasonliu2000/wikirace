@@ -1,7 +1,10 @@
 package com.jasonliu.app.wikirace.wiki;
-import java.util.logging.Logger;
 
 import com.jasonliu.app.wikirace.Constants;
+import com.jasonliu.app.wikirace.Constants.WikiraceStatus;
+
+import java.util.logging.Logger;
+import java.util.LinkedList;
 
 public class Search implements Runnable {
   private static final Logger logger = Logger.getLogger(Constants.LOGGER);
@@ -9,30 +12,26 @@ public class Search implements Runnable {
   String target;
   
   Search(WikiNode wikiNode, String target) {
-    logger.info(String.format("Search obj initiated for: %s", wikiNode.name));
     this.wikiNode = wikiNode;
     this.target = target;
   }
 
   public void run() {
-    try {
-      logger.info(String.format("Thread %s is running for wiki article %s", Thread.currentThread().getId(), wikiNode.name));
-      Thread.sleep(500);
-      logger.info(String.format("ADDING article %s to visited", wikiNode.name));
-      if (wikiNode.name == "Romania") {
-        WikiRace.addNodeToQueue(new WikiNode("Australia"));
-        WikiRace.addNodeToQueue(new WikiNode("Greece"));
-        logger.info("aus added");
-      }
+    if (!(WikiRace.getStatus() == WikiraceStatus.COMPLETED)) {
+      logger.info(String.format("Thread %s is running for wiki article %s (via path: %s)", Thread.currentThread().getId(), wikiNode.name, wikiNode.pathToNode.toString()));
 
-      if (wikiNode.name.equals(target)) {
-        logger.info("found target");
-        WikiRace.targetFound();
+      LinkedList<String> linksInArticle = WikiPage.getLinks(wikiNode.name);
+      for (String link : linksInArticle) {
+        WikiNode childNode = new WikiNode(link, wikiNode.pathToNode);
+        if (link.equals(target)) {
+          logger.info("found");
+          String[] pathToTarget = childNode.pathToNode.toArray(new String[childNode.pathToNode.size()]);
+          WikiRace.targetFound(pathToTarget);
+          break;
+        } else {
+          WikiRace.addNodeToQueue(childNode);
+        }
       }
-    } catch (InterruptedException e) {
-        logger.info(String.format("EXCEPTION: %s", wikiNode.name));
-        logger.severe(String.format("thread interrupted when visiting article %s with the following message: %s", wikiNode.name, e.getMessage()));
     }
-    // WikiPage.getLinks(...)
   }
 }
