@@ -24,7 +24,7 @@ public class Search implements Runnable {
       for (String link : linksInArticle) {
         WikiNode childNode = new WikiNode(link, wikiNode.pathToNode);
         if (link.equals(target)) {
-          logger.info("found");
+          logger.info("Wikipedia target article has been found");
           String[] pathToTarget = childNode.pathToNode.toArray(new String[childNode.pathToNode.size()]);
           WikiRace.targetFound(pathToTarget);
           break;
