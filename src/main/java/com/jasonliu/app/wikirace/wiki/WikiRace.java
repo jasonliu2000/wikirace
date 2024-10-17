@@ -114,7 +114,7 @@ public class WikiRace extends Thread {
   }
 
 	public static synchronized void targetFound(String[] pathTaken) {
-		time = String.valueOf(System.currentTimeMillis() - startTime); // TODO: refactor into a setter method
+		time = calculateTimeDuration();
 		logger.info(String.format("Time taken: %s ms", time));
 
 		status = WikiraceStatus.COMPLETED;
@@ -132,6 +132,10 @@ public class WikiRace extends Thread {
 
 	public static String getTimeDuration() {
 		return time;
+	}
+
+	private static String calculateTimeDuration() {
+		return String.valueOf(System.currentTimeMillis() - startTime);
 	}
 
 	public static String[] getPathToTarget() {
