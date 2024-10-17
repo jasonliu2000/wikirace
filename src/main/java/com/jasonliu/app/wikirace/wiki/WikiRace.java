@@ -22,9 +22,8 @@ public class WikiRace extends Thread {
   private static String targetPage;
 	private static String[] pathToTarget;
 
-	private static BlockingQueue<WikiNode> queue = new LinkedBlockingQueue<WikiNode>();
-  private static HashSet<String> hints = new HashSet<String>();
-	private static HashSet<String> queueHistory = new HashSet<String>();
+	private static BlockingQueue<WikiNode> queue;
+	private static HashSet<String> queueHistory;
 
 	private static ExecutorService executor;
 	
@@ -54,6 +53,9 @@ public class WikiRace extends Thread {
 			setStatusFailed();
 			logger.severe(Constants.REQUIRE_VALID_TARGET);
     }
+
+		queueHistory = new HashSet<String>();
+		queue = new LinkedBlockingQueue<WikiNode>();
 
 		startingPage = start;
 		targetPage = target;
@@ -114,7 +116,7 @@ public class WikiRace extends Thread {
 	public static synchronized void targetFound(String[] pathTaken) {
 		time = String.valueOf(System.currentTimeMillis() - startTime); // TODO: refactor into a setter method
 		logger.info(String.format("Time taken: %s ms", time));
-		
+
 		status = WikiraceStatus.COMPLETED;
 		pathToTarget = pathTaken;
 		executor.shutdown();
