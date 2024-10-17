@@ -80,7 +80,7 @@ public class WikiRace extends Thread {
 	}
 
 	private void executeWikirace() {
-		executor = Executors.newSingleThreadExecutor(); //newFixedThreadPool(10); // Runtime.getRuntime().availableProcessors()
+		executor = Executors.newFixedThreadPool(10); // newSingleThreadExecutor(); // Runtime.getRuntime().availableProcessors()
 		
 		while (true) {
 			WikiNode node;
