@@ -38,8 +38,6 @@ public class WikiRaceController {
 		switch (WikiRace.getStatus()) {
 			case NOT_STARTED:
 				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wikirace has not started yet.");
-			case FAILED:
-				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Wikirace failed. Please try again.");
 			case IN_PROGRESS:
 				return new Status("Wikirace is in progress.", 
 													"",
@@ -51,7 +49,7 @@ public class WikiRaceController {
 													duration,
 													path);
 			default:
-				throw new WikiraceException();
+				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Wikirace failed. Please try again.");
 		}
 	}
 
@@ -85,9 +83,4 @@ public class WikiRaceController {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Failed to start wikirace. Please try again.");
 		}
 	}
-
-	@ResponseStatus(value=HttpStatus.BAD_REQUEST, reason="Wikipedia article not found.") // TODO: refactor to get reason to show up in http response
-	public class ArticleNotFoundException extends RuntimeException {}
-
-	public class WikiraceException extends RuntimeException {}
 }
