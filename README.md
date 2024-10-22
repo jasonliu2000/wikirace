@@ -3,7 +3,7 @@
 A program that simulates [wikiracing](https://en.wikipedia.org/wiki/Wikiracing) in the fastest time possible.
 
 # Getting started
-1. Clone the repo
+1. Clone the repo:
 ```
 git clone https://github.com/jasonliu2000/wikirace.git
 ```
