@@ -40,20 +40,6 @@ public class WikiRace extends Thread {
 			logger.warning("Failed to setup log file");
 		}
 
-    if (!WikiPage.exists(start)) {
-			setStatusFailed();
-			logger.severe(Constants.REQUIRE_VALID_START);
-    }
-
-		if (start == target) {
-			status = WikiraceStatus.COMPLETED;
-		}
-
-    if (!WikiPage.exists(target)) {
-			setStatusFailed();
-			logger.severe(Constants.REQUIRE_VALID_TARGET);
-    }
-
 		queueHistory = new HashSet<String>();
 		queue = new LinkedBlockingQueue<WikiNode>();
 
@@ -91,7 +77,7 @@ public class WikiRace extends Thread {
 				if (e.getClass().getName() == RejectedExecutionException.class.getName()) {
 					break;
 				} else {
-					setStatusFailed();
+					status = WikiraceStatus.FAILED;
 					logger.severe(e.getMessage());
 				}
 			}
@@ -124,10 +110,6 @@ public class WikiRace extends Thread {
 
 	public static WikiraceStatus getStatus() {
 		return status;
-	}
-
-	private static void setStatusFailed() {
-		status = WikiraceStatus.FAILED;
 	}
 
 	public static String getTimeDuration() {
