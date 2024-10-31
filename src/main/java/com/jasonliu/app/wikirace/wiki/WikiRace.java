@@ -4,8 +4,6 @@ import com.jasonliu.app.wikirace.Constants;
 import com.jasonliu.app.wikirace.Constants.WikiraceStatus;
 
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-import java.util.logging.FileHandler;
 import java.util.concurrent.*;
 import java.util.HashSet;
 
@@ -13,7 +11,6 @@ public class WikiRace extends Thread {
 	private static WikiRace wikirace;
 
 	private static final Logger logger = Logger.getLogger(Constants.LOGGER);
-	private static FileHandler fileHandler;
 
 	private static WikiraceStatus status = WikiraceStatus.NOT_STARTED;
 	private static long startTime;
@@ -32,14 +29,6 @@ public class WikiRace extends Thread {
 		pathToTarget = new String[]{};
 		status = WikiraceStatus.IN_PROGRESS;
 
-		try {
-			FileHandler fileHandler = new FileHandler(Constants.LOG_FILENAME);
-			fileHandler.setFormatter(new SimpleFormatter());
-			logger.addHandler(fileHandler);
-		} catch (Exception e) {
-			logger.warning("Failed to setup log file");
-		}
-
 		queueHistory = new HashSet<String>();
 		queue = new LinkedBlockingQueue<WikiNode>();
 
@@ -57,10 +46,6 @@ public class WikiRace extends Thread {
 		WikiNode startNode = new WikiNode(startingPage);
 		addNodeToQueue(startNode);
 		executeWikirace();
-
-		if (fileHandler != null) {
-			fileHandler.close();
-		}
 	}
 
 	private void executeWikirace() {

@@ -1,7 +1,11 @@
 package com.jasonliu.app.wikirace.controller;
+
 import java.net.URI;
+
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import java.util.logging.FileHandler;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +32,16 @@ public class WikiRaceController {
 	private final AtomicLong pongCounter = new AtomicLong();
 	private final AtomicLong wikiraceJobId = new AtomicLong();
 	private static WikiRace wikirace;
+
+	WikiRaceController() {
+		try {
+			FileHandler fileHandler = new FileHandler(Constants.LOG_FILENAME);
+			fileHandler.setFormatter(new SimpleFormatter());
+			logger.addHandler(fileHandler);
+		} catch (Exception e) {
+			logger.warning("Failed to setup log file");
+		}
+	}
 
 	@GetMapping("/ping")
 	public Ping ping() {
