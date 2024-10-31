@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
+import org.jsoup.HttpStatusException;
+
 import com.jasonliu.app.wikirace.Constants;
 import com.jasonliu.app.wikirace.Constants.WikiraceStatus;
 import com.jasonliu.app.wikirace.wiki.WikiPage;
@@ -55,19 +57,23 @@ public class WikiRaceController {
 
 	@PostMapping("/wikirace")
 	public ResponseEntity<String> startWikirace(@RequestParam String start, @RequestParam String target) {
-		if (start.isEmpty() || !WikiPage.exists(start)) {
-			logger.severe(Constants.REQUIRE_VALID_START);
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The provided starting Wikipedia article does not exist. Please try again.");
-    }
-
-		if (start.equals(target)) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please provide a target Wikipedia article different from the starting one,");
+		if (start.isEmpty()) {
+			logger.severe("A starting Wikipedia article was not provided in the query params");
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constants.REQUIRE_STARTING_ARTICLE);
+		}
+		if (target.isEmpty()) {
+			logger.severe("A target Wikipedia article was not provided in the query params");
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constants.REQUIRE_TARGET_ARTICLE);
 		}
 
-		if (target.isEmpty() || !WikiPage.exists(target)) {
-			logger.severe(Constants.REQUIRE_VALID_TARGET);
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The provided target Wikipedia article does not exist. Please try again.");
-    }
+		logger.info(String.format("Attempted wikirace started with '%s' as the starting article and '%s' as the target article", start, target));
+		WikiPage.exists(start);
+		WikiPage.exists(target);
+
+		if (start.equals(target)) {
+			logger.severe("Start and target articles were the same");
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please provide a target Wikipedia article different from the starting one.");
+		}
 
 		try {
 			wikirace = WikiRace.initiate(start, target);

@@ -71,13 +71,11 @@ public class WikiRace extends Thread {
 			try {
 				node = queue.take();
 				executor.execute(new Search(node, targetPage));
-			} catch (InterruptedException | RejectedExecutionException e) {
-				if (e.getClass().getName() == RejectedExecutionException.class.getName()) {
-					break;
-				} else {
-					status = WikiraceStatus.FAILED;
-					logger.severe(e.getMessage());
-				}
+			} catch (InterruptedException e) {
+				status = WikiraceStatus.FAILED;
+				logger.severe(e.getMessage());
+			} catch (RejectedExecutionException e) {
+				break;
 			}
 		}
 	}
