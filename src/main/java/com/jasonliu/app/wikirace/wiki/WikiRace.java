@@ -54,8 +54,6 @@ public class WikiRace extends Thread {
 
 	public void run() {
 		startTime = System.currentTimeMillis();
-		logger.info(String.format("We want to go from wiki page %s to wiki page %s", startingPage, targetPage));
-
 		WikiNode startNode = new WikiNode(startingPage);
 		addNodeToQueue(startNode);
 		executeWikirace();
@@ -66,7 +64,7 @@ public class WikiRace extends Thread {
 	}
 
 	private void executeWikirace() {
-		executor = Executors.newFixedThreadPool(10); // newSingleThreadExecutor(); // Runtime.getRuntime().availableProcessors()
+		executor = Executors.newFixedThreadPool(10);
 		
 		while (true) {
 			WikiNode node;
