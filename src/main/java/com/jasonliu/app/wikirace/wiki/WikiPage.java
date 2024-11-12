@@ -26,31 +26,11 @@ public class WikiPage {
 		return wikiBaseUrl + wikiSubPath + identifier;
 	}
 
-	public static void exists(String page) throws ResponseStatusException {
+	public static void exists(String page) throws IOException {
 		String url = getUrl(page);
 		Connection connection = Jsoup.connect(url);
 		connection.method(Connection.Method.GET);
-
-		try {
-			connection.execute();
-		} catch (HttpStatusException e) {
-			logger.severe(e.getMessage());
-
-			int statusCode = e.getStatusCode();
-			if (statusCode == 404) {
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("The provided Wikipedia article '%s' does not exist. Please try again.", page));
-			} else if (statusCode >= 500) {
-				throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "The upstream Wikipedia server failed. Please try again.");
-			} else {
-				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "The server failed to verify that the Wikipedia article exist. Please file a ticket for a fix.");
-			}
-		} catch (IOException e) {
-			logger.severe(e.getMessage());
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Network error. Please check your internet connection and try again.");
-	  } catch (Exception e) {
-			logger.severe(e.toString());
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal error. Please try again later and file a ticket for a fix if the issue persists.");
-		}
+		connection.execute();
 	}
 
 	public static LinkedList<String> getLinks(String page) {
