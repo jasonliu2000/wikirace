@@ -9,7 +9,7 @@ git clone https://github.com/jasonliu2000/wikirace.git
 ```
 2. Navigate to the project folder and build the project:
 ```
-mvn clean install
+mvn clean package
 ```
 An executable jar file will be created in `wikirace/target`.
 
