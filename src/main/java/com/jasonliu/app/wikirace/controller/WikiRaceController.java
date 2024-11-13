@@ -55,9 +55,9 @@ public class WikiRaceController {
 		// consider if we want to set the status back to NOT_STARTED after a completed wikirace
 		switch (WikiRace.getStatus()) {
 			case NOT_STARTED:
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wikirace has not started yet.");
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constants.NOT_STARTED_MSG);
 			case IN_PROGRESS:
-				return new Status("Wikirace is in progress.", 
+				return new Status(Constants.IN_PROGRESS_MSG, 
 													"",
 													new String[]{});
 			case COMPLETED:
@@ -67,7 +67,7 @@ public class WikiRaceController {
 													duration,
 													path);
 			default:
-				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Wikirace failed. Please try again.");
+				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Constants.FAILED_MSG);
 		}
 	}
 
