@@ -73,6 +73,7 @@ public class WikiRaceController {
 
 	@PostMapping("/wikirace")
 	public ResponseEntity<String> startWikirace(@RequestParam String start, @RequestParam String target) {
+		logger.info(String.format("Wikirace attempted with '%s' as the starting article and '%s' as the target article", start, target));
 		validateWikiArticles(start, target);
 
 		try {
@@ -131,7 +132,7 @@ public class WikiRaceController {
 		}
 
 		throwExceptionIfArticleDoesNotExist(target);
-		
+
 		logger.info("Start and target wiki articles have been validated");
 	}
 }
