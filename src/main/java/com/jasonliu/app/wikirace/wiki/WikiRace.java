@@ -8,55 +8,46 @@ import java.util.concurrent.*;
 import java.util.HashSet;
 
 public class WikiRace extends Thread {
-	private static WikiRace wikirace;
 
 	private static final Logger logger = Logger.getLogger(Constants.LOGGER);
+	private WikiraceStatus status;
 
-	private static WikiraceStatus status;
-	private static long startTime;
-	private static String time;
-	private static String startingPage;
-  private static String targetPage;
-	private static String[] pathToTarget;
+	private long startTime;
+	private long timeToCompleteMillis;
+	private boolean targetFound;
 
-	private static BlockingQueue<WikiNode> queue;
-	private static HashSet<String> queueHistory;
+	private final String start;
+  private final String target;
+	private String[] pathToTarget;
 
-	private static ExecutorService executor;
+	private BlockingQueue<WikiNode> queue;
+	private HashSet<String> queueHistory;
+	private final ExecutorService executor = Executors.newFixedThreadPool(10);
 	
-  private WikiRace(String start, String target) {
-		time = "";
-		pathToTarget = new String[]{};
+  public WikiRace(String start, String target) {
+		this.start = start;
+		this.target = target;
+
+		timeToCompleteMillis = 0;
 		status = WikiraceStatus.NOT_STARTED;
 
+		pathToTarget = new String[]{};
 		queueHistory = new HashSet<String>();
 		queue = new LinkedBlockingQueue<WikiNode>();
 
-		startingPage = start;
-		targetPage = target;
+		WikiNode startNode = new WikiNode(this.start);
+		addNodeToQueue(startNode);
   }
-
-	public static WikiRace initiate(String start, String target) {
-		wikirace = new WikiRace(start, target);
-		return wikirace;
-	}
 
 	public void run() {
 		status = WikiraceStatus.IN_PROGRESS;
 		startTime = System.currentTimeMillis();
-		WikiNode startNode = new WikiNode(startingPage);
-		addNodeToQueue(startNode);
-		executeWikirace();
-	}
-
-	private void executeWikirace() {
-		executor = Executors.newFixedThreadPool(10);
 		
 		while (true) {
 			WikiNode node;
 			try {
 				node = queue.take();
-				executor.execute(new Search(node, targetPage));
+				executor.execute(new Search(this, node, target));
 			} catch (InterruptedException e) {
 				status = WikiraceStatus.FAILED;
 				logger.severe(e.getMessage());
@@ -66,11 +57,11 @@ public class WikiRace extends Thread {
 		}
 	}
 
-	static synchronized int queueSize() {
+	synchronized int queueSize() {
     return queue.size();
   }
 
-	static synchronized void addNodeToQueue(WikiNode node) {
+	synchronized void addNodeToQueue(WikiNode node) {
 		try {
 			if (queueHistory.add(node.name)) {
 				queue.put(node);
@@ -81,28 +72,31 @@ public class WikiRace extends Thread {
 		}
   }
 
-	public static synchronized void targetFound(String[] pathTaken) {
-		time = calculateTimeDuration();
-		logger.info(String.format("Time taken: %s ms", time));
+	public synchronized void targetFound(String[] pathTaken) {
+		if (!targetFound) {
+			logger.info("Wikipedia target article has been found");
+			status = WikiraceStatus.COMPLETED;
+			
+			timeToCompleteMillis = System.currentTimeMillis() - startTime;
+			logger.info(String.format("Time taken: %s ms", timeToCompleteMillis));
 
-		status = WikiraceStatus.COMPLETED;
-		pathToTarget = pathTaken;
-		executor.shutdown();
+			pathToTarget = pathTaken;
+			logger.info(String.format("Path to target: %s", String.join(" -> ", pathToTarget)));
+
+			targetFound = true;
+			executor.shutdown();
+		}
 	}
 
-	public static WikiraceStatus getStatus() {
+	public WikiraceStatus getStatus() {
 		return status;
 	}
 
-	public static String getTimeDuration() {
-		return time;
+	public long getTimeDuration() {
+		return timeToCompleteMillis;
 	}
 
-	private static String calculateTimeDuration() {
-		return String.valueOf(System.currentTimeMillis() - startTime);
-	}
-
-	public static String[] getPathToTarget() {
+	public String[] getPathToTarget() {
 		return pathToTarget;
 	}
 }

@@ -32,7 +32,7 @@ public class WikiRaceController {
 	private static final Logger logger = Logger.getLogger("WikiRaceGlobalLogger");
 	private final AtomicLong pongCounter = new AtomicLong();
 	private final AtomicLong wikiraceJobId = new AtomicLong();
-	private static WikiRace wikirace;
+	private WikiRace wikirace;
 
 	WikiRaceController() {
 		try {
@@ -52,8 +52,10 @@ public class WikiRaceController {
 
 	@GetMapping("/wikirace/status")
 	public Status getWikiraceStatus() {
-		// consider if we want to set the status back to NOT_STARTED after a completed wikirace
-		switch (WikiRace.getStatus()) {
+		if (wikirace == null) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constants.NOT_STARTED_MSG);
+		}
+		switch (wikirace.getStatus()) {
 			case NOT_STARTED:
 				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constants.NOT_STARTED_MSG);
 			case IN_PROGRESS:
@@ -61,8 +63,8 @@ public class WikiRaceController {
 													"",
 													new String[]{});
 			case COMPLETED:
-				String duration = WikiRace.getTimeDuration();
-				String[] path = WikiRace.getPathToTarget();
+				String duration = String.valueOf(wikirace.getTimeDuration());
+				String[] path = wikirace.getPathToTarget();
 				return new Status("Wikirace has completed.",
 													duration,
 													path);
@@ -77,10 +79,10 @@ public class WikiRaceController {
 		validateWikiArticles(start, target);
 
 		try {
-			wikirace = WikiRace.initiate(start, target);
+			wikirace = new WikiRace(start, target);
 			wikirace.start();
 
-			URI location = new URI(String.format("/wikirace/%s", wikiraceJobId.incrementAndGet())); // this can throw an exception
+			URI location = new URI(String.format("/wikirace/%s", wikiraceJobId.incrementAndGet()));
 			HttpHeaders responseHeaders = new HttpHeaders();
    		responseHeaders.setLocation(location);
 			return new ResponseEntity<String>("Request accepted. Starting the wikirace now.", responseHeaders, HttpStatus.ACCEPTED);
