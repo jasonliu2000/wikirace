@@ -73,23 +73,7 @@ public class WikiRaceController {
 
 	@PostMapping("/wikirace")
 	public ResponseEntity<String> startWikirace(@RequestParam String start, @RequestParam String target) {
-		if (start.isEmpty()) {
-			logger.severe("A starting Wikipedia article was not provided in the query params");
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constants.REQUIRE_STARTING_ARTICLE);
-		}
-		if (target.isEmpty()) {
-			logger.severe("A target Wikipedia article was not provided in the query params");
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constants.REQUIRE_TARGET_ARTICLE);
-		}
-
-		logger.info(String.format("Attempted wikirace started with '%s' as the starting article and '%s' as the target article", start, target));
-		throwExceptionIfArticleDoesNotExist(start);
-		throwExceptionIfArticleDoesNotExist(target);
-
-		if (start.equals(target)) {
-			logger.severe("Start and target articles were the same");
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please provide a target Wikipedia article different from the starting one.");
-		}
+		validateWikiArticles(start, target);
 
 		try {
 			wikirace = WikiRace.initiate(start, target);
@@ -127,5 +111,25 @@ public class WikiRaceController {
 				logger.severe(e.toString());
 				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal error. Please try again later and file a ticket for a fix if the issue persists.");
 			}
+	}
+
+	private static void validateWikiArticles(String start, String target) throws ResponseStatusException {
+		if (start.isEmpty()) {
+			logger.severe("A starting Wikipedia article was not provided in the query params");
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constants.REQUIRE_STARTING_ARTICLE);
+		}
+		if (target.isEmpty()) {
+			logger.severe("A target Wikipedia article was not provided in the query params");
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constants.REQUIRE_TARGET_ARTICLE);
+		}
+
+		logger.info(String.format("Attempted wikirace started with '%s' as the starting article and '%s' as the target article", start, target));
+		throwExceptionIfArticleDoesNotExist(start);
+		throwExceptionIfArticleDoesNotExist(target);
+
+		if (start.equals(target)) {
+			logger.severe("Start and target articles were the same");
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please provide a target Wikipedia article different from the starting one.");
+		}
 	}
 }
