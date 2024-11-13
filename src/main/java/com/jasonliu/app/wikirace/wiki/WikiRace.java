@@ -12,7 +12,7 @@ public class WikiRace extends Thread {
 
 	private static final Logger logger = Logger.getLogger(Constants.LOGGER);
 
-	private static WikiraceStatus status = WikiraceStatus.NOT_STARTED;
+	private static WikiraceStatus status;
 	private static long startTime;
 	private static String time;
 	private static String startingPage;
@@ -27,7 +27,7 @@ public class WikiRace extends Thread {
   private WikiRace(String start, String target) {
 		time = "";
 		pathToTarget = new String[]{};
-		status = WikiraceStatus.IN_PROGRESS;
+		status = WikiraceStatus.NOT_STARTED;
 
 		queueHistory = new HashSet<String>();
 		queue = new LinkedBlockingQueue<WikiNode>();
@@ -42,6 +42,7 @@ public class WikiRace extends Thread {
 	}
 
 	public void run() {
+		status = WikiraceStatus.IN_PROGRESS;
 		startTime = System.currentTimeMillis();
 		WikiNode startNode = new WikiNode(startingPage);
 		addNodeToQueue(startNode);
