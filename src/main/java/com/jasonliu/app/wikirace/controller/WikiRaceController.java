@@ -8,6 +8,8 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.util.logging.FileHandler;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.ArrayList;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,26 +55,48 @@ public class WikiRaceController {
 		return new Ping(pongCounter.get(), "pong");
 	}
 
-	@GetMapping("/wikirace/{id}")
-	public Status getWikiRace(@PathVariable long id) {
+	@GetMapping("/wikiraces")
+	public ResponseEntity<ArrayList<Status>> listStatuses() {
 
-		if (!wikiRaces.containsKey(id)) {
+		ArrayList<Status> statuses = new ArrayList<Status>();
+
+		for (Map.Entry<Long, WikiRace> entry : wikiRaces.entrySet()) {
+			WikiRace wikiRace = entry.getValue();
+			
+			if (wikiRace.getStatus() == WikiraceStatus.COMPLETED) {
+				String duration = String.valueOf(wikiRace.getTimeDuration());
+				String[] path = wikiRace.getPathToTarget();
+				statuses.add(new Status(entry.getKey(), "Wikirace has completed.", duration, path));
+			}
+		}
+
+		return ResponseEntity.ok(statuses);
+	}
+
+	@GetMapping("/wikiraces/{wikiraceId}")
+	public Status getStatus(@PathVariable long wikiraceId) {
+
+		if (!wikiRaces.containsKey(wikiraceId)) {
+			logger.severe(String.format("Wikirace with id %s not found.", wikiraceId));
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, Constants.NOT_FOUND_MSG);
 		}
 
-		WikiRace wikiRace = wikiRaces.get(id);
+		logger.fine(String.format("Getting status of wikirace with id: %s", wikiraceId));
+		WikiRace wikiRace = wikiRaces.get(wikiraceId);
 		
 		switch (wikiRace.getStatus()) {
 			case NOT_STARTED:
 				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constants.NOT_STARTED_MSG);
 			case IN_PROGRESS:
-				return new Status(Constants.IN_PROGRESS_MSG, 
+				return new Status(wikiraceId,
+													Constants.IN_PROGRESS_MSG, 
 													"",
 													new String[]{});
 			case COMPLETED:
 				String duration = String.valueOf(wikiRace.getTimeDuration());
 				String[] path = wikiRace.getPathToTarget();
-				return new Status("Wikirace has completed.",
+				return new Status(wikiraceId,
+													"Wikirace has completed.",
 													duration,
 													path);
 			default:
