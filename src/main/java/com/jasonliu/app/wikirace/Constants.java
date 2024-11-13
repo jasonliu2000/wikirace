@@ -12,6 +12,7 @@ public final class Constants {
   public static final String REQUIRE_TARGET_ARTICLE = "Please provide a target Wikipedia article.";
   public static final String REQUEST_ACCEPTED_MSG = "Request accepted. Starting the wikirace now.";
 
+  public static final String NOT_FOUND_MSG = "Wikirace with this job id was not found.";
   public static final String NOT_STARTED_MSG = "Wikirace has not started yet.";
   public static final String IN_PROGRESS_MSG = "Wikirace is in progress.";
   public static final String COMPLETED_MSG = "Wikirace has completed.";
