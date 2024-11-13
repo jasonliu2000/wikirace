@@ -123,13 +123,15 @@ public class WikiRaceController {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constants.REQUIRE_TARGET_ARTICLE);
 		}
 
-		logger.info(String.format("Attempted wikirace started with '%s' as the starting article and '%s' as the target article", start, target));
 		throwExceptionIfArticleDoesNotExist(start);
-		throwExceptionIfArticleDoesNotExist(target);
 
 		if (start.equals(target)) {
 			logger.severe("Start and target articles were the same");
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please provide a target Wikipedia article different from the starting one.");
 		}
+
+		throwExceptionIfArticleDoesNotExist(target);
+		
+		logger.info("Start and target wiki articles have been validated");
 	}
 }
