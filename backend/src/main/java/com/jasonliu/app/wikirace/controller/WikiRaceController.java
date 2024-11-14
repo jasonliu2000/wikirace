@@ -116,7 +116,7 @@ public class WikiRaceController {
 			WikiRace wikiRace = new WikiRace(start, target);
 			wikiRace.start();
 
-			URI location = new URI(String.format("/wikirace/%s", wikiRaceJobId.incrementAndGet()));
+			URI location = new URI(String.format("/wikiraces/%s", wikiRaceJobId.incrementAndGet()));
 			wikiRaces.put(wikiRaceJobId.get(), wikiRace);
 
 			HttpHeaders responseHeaders = new HttpHeaders();
