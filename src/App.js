@@ -7,31 +7,66 @@ function App() {
   const [wikiRaces, setWikiRaces] = useState([]);
   const [startingArticle, setStartingArticle] = useState("");
   const [targetArticle, setTargetArticle] = useState("");
+  const [newWikiRaceDisabled, setNewWikiRaceDisabled] = useState(false);
+  const [wikiRaceFailed, setWikiRaceFailed] = useState(false);
 
   useEffect(() => {
-    async function fetchWikiRaces() {
-      const wikiRaces = await wikiraceServices.getAll();
-      setWikiRaces(wikiRaces);
-    }
     fetchWikiRaces(); // function called everytime the browser is loaded/reloaded
   }, []);
 
-  function startButtonClicked(e) {
-    e.preventDefault();
-    console.log("wikirace started");
-
-    const wikiRaceAttempted = { start: startingArticle, target: targetArticle };
-    startWikiRace(wikiRaceAttempted);
+  async function fetchWikiRaces() {
+    const wikiRaces = await wikiraceServices.getAll();
+    console.log(wikiRaces);
+    setWikiRaces(wikiRaces);
   }
 
   async function startWikiRace(newWikiRace) {
-    console.log(newWikiRace);
     try {
       const response = await wikiraceServices.start(newWikiRace);
-      console.log(response);
+      if (response.status === 202) {
+        setNewWikiRaceDisabled(true);
+      }
+
+      handleWikiRace(response.headers['location']);
+
     } catch (error) {
-      console.log(error.response.data.error);
+      setWikiRaceFailed(true);
+      console.log(error.toJSON());
     }
+  }
+
+  async function handleWikiRace(wikiRaceId) {
+    const polling = new Promise((resolve) => {
+      let completed = false;
+      setInterval(async () => {
+        if (completed) { return }
+
+        const response = await wikiraceServices.get(wikiRaceId);
+        console.log(response);
+        
+        if (response.status.includes('completed')) {
+          completed = true;
+          clearInterval(polling);
+          resolve('')
+        } 
+      }, 500)
+    })
+    
+    const completed = await polling.catch((err) => {
+      console.error(err);
+      return 'there was an issue with completing the wikirace';
+    });
+    
+    setNewWikiRaceDisabled(false);
+    fetchWikiRaces();
+  }
+
+  function startButtonClicked(e) {
+    e.preventDefault();
+    setWikiRaceFailed(false);
+
+    const wikiRaceAttempted = { start: startingArticle, target: targetArticle };
+    startWikiRace(wikiRaceAttempted);
   }
 
   const listWikiRaces = wikiRaces.map(wikiRace =>
@@ -67,7 +102,7 @@ function App() {
         <br></br>
         <br></br>
 
-        <button type="submit">START</button>
+        <button type="submit" disabled={newWikiRaceDisabled}>START</button> {wikiRaceFailed && <p>wikirace failed!</p>}
       </form>
 
       <div>
