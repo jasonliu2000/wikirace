@@ -25,9 +25,10 @@ function App() {
       const response = await wikiraceServices.start(newWikiRace);
       if (response.status === 202) {
         setNewWikiRaceDisabled(true);
+        fetchWikiRaces();
       }
 
-      handleWikiRace(response.headers['location']);
+      pollWikiRaceProgress(response.headers['location']);
 
     } catch (error) {
       setWikiRaceFailed(true);
@@ -35,7 +36,7 @@ function App() {
     }
   }
 
-  async function handleWikiRace(wikiRaceId) {
+  async function pollWikiRaceProgress(wikiRaceId) {
     const polling = new Promise((resolve) => {
       let completed = false;
       setInterval(async () => {
@@ -44,7 +45,7 @@ function App() {
         const response = await wikiraceServices.get(wikiRaceId);
         console.log(response);
         
-        if (response.status.includes('completed')) {
+        if (response.status === 'COMPLETED') {
           completed = true;
           clearInterval(polling);
           resolve('')
@@ -58,7 +59,6 @@ function App() {
     });
     
     setNewWikiRaceDisabled(false);
-    fetchWikiRaces();
   }
 
   function startButtonClicked(e) {
@@ -71,7 +71,7 @@ function App() {
 
   const listWikiRaces = wikiRaces.map(wikiRace =>
     <li key={wikiRace.id}>
-      <p>{wikiRace.pathToTarget} took {wikiRace.timeDurationMilliseconds} milliseconds</p>
+      <p>{wikiRace.data.pathToTarget} took {wikiRace.data.elapsedTimeMilliseconds} milliseconds</p>
     </li>
   );
 
