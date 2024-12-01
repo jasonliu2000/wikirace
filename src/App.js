@@ -17,7 +17,7 @@ function App() {
   async function fetchWikiRaces() {
     const wikiRaces = await wikiraceServices.getAll();
     console.log(wikiRaces);
-    setWikiRaces(wikiRaces);
+    setWikiRaces(wikiRaces.reverse());
   }
 
   async function startWikiRace(newWikiRace) {
@@ -71,7 +71,7 @@ function App() {
 
   const listWikiRaces = wikiRaces.map(wikiRace =>
     <li key={wikiRace.id}>
-      <p>{wikiRace.data.pathToTarget} took {wikiRace.data.elapsedTimeMilliseconds} milliseconds</p>
+      <p>{wikiRace.data.start} to {wikiRace.data.target} took {wikiRace.data.elapsedTimeMilliseconds} milliseconds</p>
     </li>
   );
 

@@ -93,9 +93,9 @@ public class WikiRaceController {
 		logger.info(String.format("Wikirace attempted with '%s' as the starting article and '%s' as the target article", start, target));
 		validateWikiArticles(start, target);
 
-		WikiRaceModel model = new WikiRaceModel();
+		WikiRaceModel model = new WikiRaceModel(start, target);
 		try {
-			WikiRace wikiRace = new WikiRace(model, start, target);
+			WikiRace wikiRace = new WikiRace(model);
 			wikiRace.start();
 			
 			URI location = new URI(String.format("/wikiraces/%s", model.getId()));

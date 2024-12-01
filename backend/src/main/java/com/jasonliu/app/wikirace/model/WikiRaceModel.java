@@ -18,15 +18,21 @@ public class WikiRaceModel {
   private WikiRace wikiRace;
 
   private final long id;
+  public final String start;
+  public final String target;
+
   private WikiraceStatus status;
   private Instant startTime;
   private Instant endTime;
   private long timeToCompleteMillis;
   private String[] pathToTarget;
 
-  public WikiRaceModel() {
+  public WikiRaceModel(String start, String target) {
     id = wikiRaceJobId.incrementAndGet();
     wikiRaces.put(id, this);
+
+    this.start = start;
+    this.target = target;
     status = WikiraceStatus.NOT_STARTED;
   }
 
@@ -68,6 +74,8 @@ public class WikiRaceModel {
     }
 
     StatusData data = new StatusData(
+      start,
+      target,
       startTime.toString(),
       endTimeString,
       duration.toMillis(),

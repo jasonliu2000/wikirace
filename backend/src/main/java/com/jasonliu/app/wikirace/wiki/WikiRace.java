@@ -24,10 +24,10 @@ public class WikiRace extends Thread {
 	private HashSet<String> queueHistory;
 	private final ExecutorService executor = Executors.newFixedThreadPool(10);
 	
-  public WikiRace(WikiRaceModel model, String start, String target) {
+  public WikiRace(WikiRaceModel model) {
 		progressTracker = model;
-		this.start = start;
-		this.target = target;
+		this.start = model.start;
+		this.target = model.target;
 
 		queueHistory = new HashSet<String>();
 		queue = new LinkedBlockingQueue<WikiNode>();
