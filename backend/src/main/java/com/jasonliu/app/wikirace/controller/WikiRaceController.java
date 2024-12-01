@@ -7,7 +7,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.util.logging.FileHandler;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
 
@@ -21,17 +20,18 @@ import org.apache.catalina.connector.Response;
 import org.jsoup.HttpStatusException;
 
 import com.jasonliu.app.wikirace.Constants;
-import com.jasonliu.app.wikirace.Constants.WikiraceStatus;
 import com.jasonliu.app.wikirace.wiki.WikiPage;
 import com.jasonliu.app.wikirace.wiki.WikiRace;
+import com.jasonliu.app.wikirace.model.WikiRaceModel;
+import com.jasonliu.app.wikirace.dto.WikiRaceAttempt;
+import com.jasonliu.app.wikirace.dto.Ping;
+import com.jasonliu.app.wikirace.dto.Status;
 
 @RestController
 @RequestMapping("/api")
 public class WikiRaceController {
 	private static final Logger logger = Logger.getLogger("WikiRaceGlobalLogger");
 	private final AtomicLong pongCounter = new AtomicLong();
-	private final AtomicLong wikiRaceJobId = new AtomicLong();
-	private HashMap<Long, WikiRace> wikiRaces = new HashMap<Long, WikiRace>();
 
 	WikiRaceController() {
 		try {
@@ -54,14 +54,9 @@ public class WikiRaceController {
 
 		ArrayList<Status> statuses = new ArrayList<Status>();
 
-		for (Map.Entry<Long, WikiRace> entry : wikiRaces.entrySet()) {
-			WikiRace wikiRace = entry.getValue();
-			
-			if (wikiRace.getStatus() == WikiraceStatus.COMPLETED) {
-				String duration = String.valueOf(wikiRace.getTimeDuration());
-				String[] path = wikiRace.getPathToTarget();
-				statuses.add(new Status(entry.getKey(), "Wikirace has completed.", duration, path));
-			}
+		for (Map.Entry<Long, WikiRaceModel> entry : WikiRaceModel.getWikiRaces().entrySet()) {
+			WikiRaceModel wikiRace = entry.getValue();
+			statuses.add(wikiRace.getAPIStatus());
 		}
 
 		return ResponseEntity.ok(statuses);
@@ -70,29 +65,21 @@ public class WikiRaceController {
 	@GetMapping("/wikiraces/{wikiraceId}")
 	public Status getStatus(@PathVariable long wikiraceId) {
 
-		if (!wikiRaces.containsKey(wikiraceId)) {
+		if (!WikiRaceModel.doesWikiRaceWithIdExist(wikiraceId)) {
 			logger.severe(String.format("Wikirace with id %s not found.", wikiraceId));
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, Constants.NOT_FOUND_MSG);
 		}
 
 		logger.fine(String.format("Getting status of wikirace with id: %s", wikiraceId));
-		WikiRace wikiRace = wikiRaces.get(wikiraceId);
+		WikiRaceModel wikiRace = WikiRaceModel.getWikiRaces().get(wikiraceId);
 		
 		switch (wikiRace.getStatus()) {
 			case NOT_STARTED:
 				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constants.NOT_STARTED_MSG);
 			case IN_PROGRESS:
-				return new Status(wikiraceId,
-													Constants.IN_PROGRESS_MSG, 
-													"",
-													new String[]{});
+				return wikiRace.getAPIStatus();
 			case COMPLETED:
-				String duration = String.valueOf(wikiRace.getTimeDuration());
-				String[] path = wikiRace.getPathToTarget();
-				return new Status(wikiraceId,
-													"Wikirace has completed.",
-													duration,
-													path);
+				return wikiRace.getAPIStatus();
 			default:
 				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Constants.FAILED_MSG);
 		}
@@ -106,12 +93,12 @@ public class WikiRaceController {
 		logger.info(String.format("Wikirace attempted with '%s' as the starting article and '%s' as the target article", start, target));
 		validateWikiArticles(start, target);
 
+		WikiRaceModel model = new WikiRaceModel();
 		try {
-			WikiRace wikiRace = new WikiRace(start, target);
+			WikiRace wikiRace = new WikiRace(model, start, target);
 			wikiRace.start();
-
-			URI location = new URI(String.format("/wikiraces/%s", wikiRaceJobId.incrementAndGet()));
-			wikiRaces.put(wikiRaceJobId.get(), wikiRace);
+			
+			URI location = new URI(String.format("/wikiraces/%s", model.getId()));
 
 			HttpHeaders responseHeaders = new HttpHeaders();
    		responseHeaders.setLocation(location);
@@ -119,6 +106,10 @@ public class WikiRaceController {
 			
 		} catch (Exception e) {
 			logger.severe(e.getMessage());
+
+			if (model != null) {
+				WikiRaceModel.purgeWikiRace(model.getId());
+			}
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Failed to start wikirace. Please try again.");
 		}
 	}
@@ -169,4 +160,5 @@ public class WikiRaceController {
 
 		logger.info("Start and target wiki articles have been validated");
 	}
+
 }

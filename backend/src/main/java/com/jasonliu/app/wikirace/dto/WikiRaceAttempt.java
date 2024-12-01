@@ -1,4 +1,4 @@
-package com.jasonliu.app.wikirace.controller;
+package com.jasonliu.app.wikirace.dto;
 
 public class WikiRaceAttempt {
   private String start;

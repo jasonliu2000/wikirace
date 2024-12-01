@@ -19,7 +19,7 @@ public class Search implements Runnable {
   }
 
   public void run() {
-    if (!(wikiRace.getStatus() == WikiraceStatus.COMPLETED)) {
+    if (!(wikiRace.isTargetFound())) {
       logger.info(String.format("Thread %s is running for wiki article %s (via path: %s)", Thread.currentThread().getId(), wikiNode.name, wikiNode.pathToNode.toString()));
 
       LinkedList<String> linksInArticle = WikiPage.getLinks(wikiNode.name);

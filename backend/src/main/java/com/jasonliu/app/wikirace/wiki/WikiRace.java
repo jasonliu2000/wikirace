@@ -2,36 +2,33 @@ package com.jasonliu.app.wikirace.wiki;
 
 import com.jasonliu.app.wikirace.Constants;
 import com.jasonliu.app.wikirace.Constants.WikiraceStatus;
+import com.jasonliu.app.wikirace.model.WikiRaceModel;
 
 import java.util.logging.Logger;
 import java.util.concurrent.*;
 import java.util.HashSet;
+import java.time.Instant;
 
 public class WikiRace extends Thread {
 
 	private static final Logger logger = Logger.getLogger(Constants.LOGGER);
+
 	private WikiraceStatus status;
-
-	private long startTime;
-	private long timeToCompleteMillis;
 	private boolean targetFound;
-
+	private final WikiRaceModel progressTracker;
+	
 	private final String start;
   private final String target;
-	private String[] pathToTarget;
 
 	private BlockingQueue<WikiNode> queue;
 	private HashSet<String> queueHistory;
 	private final ExecutorService executor = Executors.newFixedThreadPool(10);
 	
-  public WikiRace(String start, String target) {
+  public WikiRace(WikiRaceModel model, String start, String target) {
+		progressTracker = model;
 		this.start = start;
 		this.target = target;
 
-		timeToCompleteMillis = 0;
-		status = WikiraceStatus.NOT_STARTED;
-
-		pathToTarget = new String[]{};
 		queueHistory = new HashSet<String>();
 		queue = new LinkedBlockingQueue<WikiNode>();
 
@@ -40,8 +37,7 @@ public class WikiRace extends Thread {
   }
 
 	public void run() {
-		status = WikiraceStatus.IN_PROGRESS;
-		startTime = System.currentTimeMillis();
+		progressTracker.setProgressStart();
 		
 		while (true) {
 			WikiNode node;
@@ -49,7 +45,7 @@ public class WikiRace extends Thread {
 				node = queue.take();
 				executor.execute(new Search(this, node, target));
 			} catch (InterruptedException e) {
-				status = WikiraceStatus.FAILED;
+				progressTracker.setFailure();
 				logger.severe(e.getMessage());
 			} catch (RejectedExecutionException e) {
 				break;
@@ -75,28 +71,20 @@ public class WikiRace extends Thread {
 	public synchronized void targetFound(String[] pathTaken) {
 		if (!targetFound) {
 			logger.info("Wikipedia target article has been found");
-			status = WikiraceStatus.COMPLETED;
+			progressTracker.setCompleted(pathTaken);
 			
-			timeToCompleteMillis = System.currentTimeMillis() - startTime;
-			logger.info(String.format("Time taken: %s ms", timeToCompleteMillis));
+			// progressTracker.setTimeDuration(System.currentTimeMillis() - startTimeMillis);
+			// logger.info(String.format("Time taken: %s ms", System.currentTimeMillis() - startTimeMillis));
 
-			pathToTarget = pathTaken;
-			logger.info(String.format("Path to target: %s", String.join(" -> ", pathToTarget)));
+			logger.info(String.format("Path to target: %s", String.join(" -> ", pathTaken)));
 
 			targetFound = true;
 			executor.shutdown();
 		}
 	}
 
-	public WikiraceStatus getStatus() {
-		return status;
+	public synchronized boolean isTargetFound() {
+		return targetFound;
 	}
 
-	public long getTimeDuration() {
-		return timeToCompleteMillis;
-	}
-
-	public String[] getPathToTarget() {
-		return pathToTarget;
-	}
 }
