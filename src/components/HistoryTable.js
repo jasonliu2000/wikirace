@@ -3,7 +3,7 @@ import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Circu
 const HistoryTable = ({ rows }) => {
   return (
     <TableContainer>
-      <Table sx={{ minWidth: 650 }} aria-label="Table of Past Wikiraces">
+      <Table sx={{ minWidth: 300 }} aria-label="Table of Past Wikiraces">
         <TableHead>
           <TableRow>
             <TableCell>Time Started</TableCell>
