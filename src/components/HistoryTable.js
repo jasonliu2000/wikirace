@@ -1,4 +1,4 @@
-import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell } from "@mui/material";
+import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell, CircularProgress } from "@mui/material";
 
 const HistoryTable = ({ rows }) => {
   return (
@@ -21,7 +21,7 @@ const HistoryTable = ({ rows }) => {
               <TableCell>{row.data.start}</TableCell>
               <TableCell>{row.data.target}</TableCell>
               <TableCell align="right">
-                <b>{row.data.elapsedTimeMilliseconds}</b>
+                {row.data.timeToCompletionMilliseconds ? (<b>{row.data.timeToCompletionMilliseconds}</b>) : (<CircularProgress size="20px" />) }
               </TableCell>
             </TableRow>
           ))}

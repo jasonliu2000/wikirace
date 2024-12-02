@@ -60,7 +60,8 @@ public class WikiRaceModel {
   public synchronized Status getAPIStatus() {
     String message = "";
     String endTimeString = "";
-    Duration duration = Duration.between(startTime, Instant.now());
+    Duration elapsedTime = Duration.between(startTime, Instant.now());
+    long timeToCompletion = 0;
 
     switch (status) {
       case IN_PROGRESS:
@@ -68,7 +69,7 @@ public class WikiRaceModel {
         break;
       case COMPLETED:
         message = Constants.COMPLETED_MSG;
-        duration = Duration.between(startTime, endTime);
+        timeToCompletion = Duration.between(startTime, endTime).toMillis();
         endTimeString = endTime.toString();
         break;
     }
@@ -78,7 +79,8 @@ public class WikiRaceModel {
       target,
       startTime.toString(),
       endTimeString,
-      duration.toMillis(),
+      elapsedTime.toMillis(),
+      timeToCompletion,
       pathToTarget
     );
 

@@ -34,6 +34,7 @@ function App() {
       const response = await wikiraceServices.start(newWikiRace);
       if (response.status === 202) {
         setNewWikiRaceDisabled(true);
+        cleanupInputs();
         fetchWikiRaces();
       }
 
@@ -66,12 +67,13 @@ function App() {
       console.error(err);
       return 'there was an issue with completing the wikirace';
     });
-    
+
+    fetchWikiRaces();
     setNewWikiRaceDisabled(false);
   }
 
-  function startButtonClicked(e) {
-    e.preventDefault();
+  function startButtonClicked(event) {
+    event.preventDefault();
     setWikiRaceFailed(false);
 
     const wikiRaceAttempted = { start: newStart, target: newTarget };
@@ -90,6 +92,11 @@ function App() {
       default:
         console.error('Input field doesn\'t have a name field');
     }
+  }
+
+  function cleanupInputs() {
+    setNewStart("");
+    setNewTarget("");
   }
 
   return (

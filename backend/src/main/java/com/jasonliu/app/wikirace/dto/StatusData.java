@@ -6,5 +6,6 @@ public record StatusData(
   String startTime,
   String endTime,
   long elapsedTimeMilliseconds,
+  long timeToCompletionMilliseconds,
   String[] pathToTarget
 ) {}
