@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
+import { Container } from '@mui/material';
 
 import './App.css';
-import wikiraceServices from './services/wikirace'
+import wikiraceServices from './services/wikirace';
+import WikiRaceForm from './components/WikiRaceForm';
+import HistoryTable from './components/HistoryTable';
 
 function App() {
   const [wikiRaces, setWikiRaces] = useState([]);
-  const [startingArticle, setStartingArticle] = useState("");
-  const [targetArticle, setTargetArticle] = useState("");
+  const [newStart, setNewStart] = useState("");
+  const [newTarget, setNewTarget] = useState("");
   const [newWikiRaceDisabled, setNewWikiRaceDisabled] = useState(false);
   const [wikiRaceFailed, setWikiRaceFailed] = useState(false);
 
@@ -17,6 +20,12 @@ function App() {
   async function fetchWikiRaces() {
     const wikiRaces = await wikiraceServices.getAll();
     console.log(wikiRaces);
+
+    wikiRaces.forEach((race) => {
+      const date = new Date(race.data.startTime);
+      race.data.startTime = date.toLocaleTimeString();
+    })
+
     setWikiRaces(wikiRaces.reverse());
   }
 
@@ -65,52 +74,40 @@ function App() {
     e.preventDefault();
     setWikiRaceFailed(false);
 
-    const wikiRaceAttempted = { start: startingArticle, target: targetArticle };
+    const wikiRaceAttempted = { start: newStart, target: newTarget };
     startWikiRace(wikiRaceAttempted);
   }
 
-  const listWikiRaces = wikiRaces.map(wikiRace =>
-    <li key={wikiRace.id}>
-      <p>{wikiRace.data.start} to {wikiRace.data.target} took {wikiRace.data.elapsedTimeMilliseconds} milliseconds</p>
-    </li>
-  );
+  function handleInputChange(event) {
+    const changedValue = event.target.value;
+    switch (event.target.name) {
+      case 'start':
+        setNewStart(changedValue);
+        break;
+      case 'target':
+        setNewTarget(changedValue);
+        break;
+      default:
+        console.error('Input field doesn\'t have a name field');
+    }
+  }
 
   return (
-    <div className="App">
-      <h2>wikiracing</h2>
+    <Container sx={{textAlign: 'center', fontFamily: 'sans-serif'}}>
 
-      <form onSubmit={startButtonClicked}>
-        <label>
-          Starting Wiki article:
-          <input 
-            value={startingArticle} 
-            onChange={ e => setStartingArticle(e.target.value) } 
-          />
-        </label>
+      <h1>Wikiracing</h1>
 
-        <br></br>
-        <br></br>
+      <WikiRaceForm
+        startButtonClicked={startButtonClicked}
+        newStart={newStart}
+        newTarget={newTarget}
+        handleInputChange={handleInputChange}
+        newWikiRaceDisabled={newWikiRaceDisabled}
+      />
 
-        <label>
-          Target Wiki article:
-          <input 
-            value={targetArticle} 
-            onChange={ e => setTargetArticle(e.target.value) } 
-          />
-        </label>
+      <HistoryTable rows={wikiRaces} />
 
-        <br></br>
-        <br></br>
-
-        <button type="submit" disabled={newWikiRaceDisabled}>START</button> {wikiRaceFailed && <p>wikirace failed!</p>}
-      </form>
-
-      <div>
-        <h4>completed wikiraces</h4>
-        <ul>{listWikiRaces}</ul>
-      </div>
-
-    </div>
+    </Container>
   );
 }
 
