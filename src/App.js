@@ -1,21 +1,19 @@
 import { useState, useEffect } from 'react';
-import { Container } from '@mui/material';
+import { Box, Container, Typography, } from '@mui/material';
 
 import './App.css';
 import wikiraceServices from './services/wikirace';
+import Intro from './components/Intro';
 import WikiRaceForm from './components/WikiRaceForm';
 import HistoryTable from './components/HistoryTable';
 
 function App() {
   const [wikiRaces, setWikiRaces] = useState([]);
-  const [newStart, setNewStart] = useState("");
-  const [newTarget, setNewTarget] = useState("");
-  const [newWikiRaceDisabled, setNewWikiRaceDisabled] = useState(false);
-  const [wikiRaceFailed, setWikiRaceFailed] = useState(false);
+  const [watchNewRace, setWatchNewRace] = useState(false);
 
   useEffect(() => {
-    fetchWikiRaces(); // function called everytime the browser is loaded/reloaded
-  }, []);
+    fetchWikiRaces(); // function called everytime the browser is loaded/reloaded and everytime setWatchNewRace() is called
+  }, [watchNewRace]);
 
   async function fetchWikiRaces() {
     const wikiRaces = await wikiraceServices.getAll();
@@ -29,30 +27,18 @@ function App() {
     setWikiRaces(wikiRaces.reverse());
   }
 
-  async function startWikiRace(newWikiRace) {
-    try {
-      const response = await wikiraceServices.start(newWikiRace);
-      if (response.status === 202) {
-        setNewWikiRaceDisabled(true);
-        cleanupInputs();
-        fetchWikiRaces();
-      }
-
-      pollWikiRaceProgress(response.headers['location']);
-
-    } catch (error) {
-      setWikiRaceFailed(true);
-      console.log(error.toJSON());
-    }
+  function watchWikiRace(id) {
+    setWatchNewRace(true);
+    pollWikiRaceProgress(id);
   }
 
-  async function pollWikiRaceProgress(wikiRaceId) {
+  async function pollWikiRaceProgress(id) {
     const polling = new Promise((resolve) => {
       let completed = false;
       setInterval(async () => {
         if (completed) { return }
 
-        const response = await wikiraceServices.get(wikiRaceId);
+        const response = await wikiraceServices.get(id);
         console.log(response);
         
         if (response.status === 'COMPLETED') {
@@ -62,59 +48,39 @@ function App() {
         } 
       }, 500)
     })
-    
+
     const completed = await polling.catch((err) => {
       console.error(err);
       return 'there was an issue with completing the wikirace';
     });
 
-    fetchWikiRaces();
-    setNewWikiRaceDisabled(false);
-  }
-
-  function startButtonClicked(event) {
-    event.preventDefault();
-    setWikiRaceFailed(false);
-
-    const wikiRaceAttempted = { start: newStart, target: newTarget };
-    startWikiRace(wikiRaceAttempted);
-  }
-
-  function handleInputChange(event) {
-    const changedValue = event.target.value;
-    switch (event.target.name) {
-      case 'start':
-        setNewStart(changedValue);
-        break;
-      case 'target':
-        setNewTarget(changedValue);
-        break;
-      default:
-        console.error('Input field doesn\'t have a name field');
-    }
-  }
-
-  function cleanupInputs() {
-    setNewStart("");
-    setNewTarget("");
+    setWatchNewRace(false);
+    // setNewWikiRaceDisabled(false);
   }
 
   return (
-    <Container sx={{textAlign: 'center', fontFamily: 'sans-serif'}}>
+    <Box
+      display="flex"
+      flexDirection="column"
+      minHeight="100vh"
+      sx={{mx: '50px', justifyContent: 'space-between' }}
+    >
+      <Box sx={{textAlign: 'center', justifyContent: 'flex-start'}} flex="1">
 
-      <h1>Wikiracing</h1>
+        <Intro />
 
-      <WikiRaceForm
-        startButtonClicked={startButtonClicked}
-        newStart={newStart}
-        newTarget={newTarget}
-        handleInputChange={handleInputChange}
-        newWikiRaceDisabled={newWikiRaceDisabled}
-      />
+        <WikiRaceForm followWikiRace={watchWikiRace}
+          // newWikiRaceDisabled={newWikiRaceDisabled}
+        />
 
-      <HistoryTable rows={wikiRaces} />
+        {wikiRaces.length > 0 && <HistoryTable rows={wikiRaces} />}
 
-    </Container>
+      </Box>
+
+      <Box component="footer">
+        <Typography>For more information about Wikiracing, please click <a target="_blank" rel="noreferrer" href="https://en.wikipedia.org/wiki/Wikiracing">here</a></Typography>
+      </Box>
+    </Box>
   );
 }
 
