@@ -1,4 +1,11 @@
+.intro {
+  font-family: "Iowan Old Style", "Sitka Text", Palatino, "Book Antiqua", serif;
+}
+
 h1 {
   font-size: 60px;
-  font-family: "Iowan Old Style", "Sitka Text", Palatino, "Book Antiqua", serif;
+}
+
+h3 {
+  color: gray;
 }
