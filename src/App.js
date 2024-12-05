@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, Container, Typography, } from '@mui/material';
+import { Box, Typography, } from '@mui/material';
 
 import './App.css';
 import wikiraceServices from './services/wikirace';
@@ -16,13 +16,17 @@ function App() {
   }, [watchNewRace]);
 
   async function fetchWikiRaces() {
-    const wikiRaces = await wikiraceServices.getAll();
-    console.log(wikiRaces);
+    try {
+      const wikiRaces = await wikiraceServices.getAll();
+      console.log(wikiRaces);
+    } catch (error) {
+      console.error(error);
+    }
 
     wikiRaces.forEach((race) => {
       const date = new Date(race.data.startTime);
       race.data.startTime = date.toLocaleTimeString();
-    })
+    });
 
     setWikiRaces(wikiRaces.reverse());
   }
@@ -33,29 +37,34 @@ function App() {
   }
 
   async function pollWikiRaceProgress(id) {
-    const polling = new Promise((resolve) => {
-      let completed = false;
-      setInterval(async () => {
-        if (completed) { return }
+    let interval;
+    const polling = new Promise((resolve, reject) => {
+      interval = setInterval(async () => {
+        try {
+          const wikirace = await wikiraceServices.get(id);
+          console.log(wikirace);
 
-        const response = await wikiraceServices.get(id);
-        console.log(response);
-        
-        if (response.status === 'COMPLETED') {
-          completed = true;
-          clearInterval(polling);
-          resolve('')
-        } 
+          if (wikirace.status === 'COMPLETED') {
+            clearInterval(interval);
+            resolve();
+          } 
+        } catch (error) {
+          // console.error(error);
+          clearInterval(interval);
+          reject(error);
+        }
       }, 500)
     })
 
-    const completed = await polling.catch((err) => {
-      console.error(err);
-      return 'there was an issue with completing the wikirace';
-    });
+    try {
+      await polling;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setWatchNewRace(false);
+      // setNewWikiRaceDisabled(false);
+    }
 
-    setWatchNewRace(false);
-    // setNewWikiRaceDisabled(false);
   }
 
   return (
