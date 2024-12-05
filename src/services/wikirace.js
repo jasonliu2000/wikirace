@@ -10,7 +10,7 @@ async function getAll() {
 }
 
 async function get(wikiRaceLocation) {
-  const response = await apiClient.get(wikiRaceLocation)
+  const response = await apiClient.get(wikiRaceLocation);
   return response.data;
 }
 
