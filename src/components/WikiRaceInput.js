@@ -14,7 +14,6 @@ const WikiRaceInput = ({ id, handleFormChange }) => {
 	const label = (id === 'start') ? 'Enter starting page' : 'Enter target page';
 
   async function handleSearch(searchTerm) {
-		console.log(searchTerm);
     setLoading(true);
 
 		const articles = await wikipediaServices.searchWikipedia(searchTerm);
