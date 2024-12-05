@@ -35,8 +35,8 @@ const WikiRaceInput = ({ id, handleFormChange }) => {
 	, []);
 
 	function handleInputChange(_, newInputValue) {
-		handleFormChange(id, newInputValue)
 		setInputValue(newInputValue);
+		handleFormChange(id, newInputValue)
 		debouncedSearch(newInputValue);
 	}
 
@@ -45,7 +45,7 @@ const WikiRaceInput = ({ id, handleFormChange }) => {
 			<InputLabel>{label}</InputLabel>
 			<Autocomplete
 				id={id}
-        open={open}
+        open={open && inputValue}
         onOpen={() => setOpen(true)}
         onClose={() => {
 					setOpen(false);
@@ -68,7 +68,7 @@ const WikiRaceInput = ({ id, handleFormChange }) => {
 					/>
         )}
         renderOption={(props, option) => (
-          <li {...props} key={option}>
+					<li {...props} key={option}>
 						{option}
           </li>
         )}
