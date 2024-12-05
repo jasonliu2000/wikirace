@@ -41,7 +41,6 @@
     ]
   },
   "devDependencies": {
-    "msw": "^2.6.4"
   },
   "msw": {
     "workerDirectory": [
