@@ -17,18 +17,19 @@ function App() {
 
   async function fetchWikiRaces() {
     try {
-      const wikiRaces = await wikiraceServices.getAll();
-      console.log(wikiRaces);
+      const races = await wikiraceServices.getAll();
+      console.log(races);
+
+      races.forEach((race) => {
+        const date = new Date(race.data.startTime);
+        race.data.startTime = date.toLocaleTimeString();
+      });
+  
+      setWikiRaces(races.reverse());
+
     } catch (error) {
       console.error(error);
     }
-
-    wikiRaces.forEach((race) => {
-      const date = new Date(race.data.startTime);
-      race.data.startTime = date.toLocaleTimeString();
-    });
-
-    setWikiRaces(wikiRaces.reverse());
   }
 
   function watchWikiRace(id) {
