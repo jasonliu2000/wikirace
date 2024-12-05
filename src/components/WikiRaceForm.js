@@ -1,11 +1,8 @@
 import { useState } from 'react';
-import { Button } from '@mui/material';
-import Grid from '@mui/material/Grid2';
-
+import { Button, Paper, Box, Container } from '@mui/material';
 
 import WikiRaceInput from './WikiRaceInput';
 import wikiraceServices from '../services/wikirace';
-import wikipediaServices from '../services/wikipedia';
 
 const WikiRaceForm = ({ followWikiRace }) => {
   const [newStart, setNewStart] = useState("");
@@ -22,70 +19,72 @@ const WikiRaceForm = ({ followWikiRace }) => {
       }
     } catch (error) {
       // setWikiRaceFailed(true);
-      console.log(error);
+      console.error(error);
     }
   }
 
   function startButtonClicked(event) {
     event.preventDefault();
-
     const wikiRaceAttempted = { start: newStart, target: newTarget };
     startWikiRace(wikiRaceAttempted);
   }
 
-  async function getSuggestedArticles(inputValue) {
-    if (inputValue) {
-      const suggestedArticles = await wikipediaServices.searchWikipedia(inputValue);
-      console.log(suggestedArticles);
-    }
-  }
-
-  function handleInputChange(event) {
-    const changedValue = event.target.value;
-    // getSuggestedArticles(changedValue);
-    switch (event.target.name) {
+  function handleFormChange(inputId, newValue) {
+    switch (inputId) {
       case 'start':
-        setNewStart(changedValue);
+        setNewStart(newValue);
         break;
       case 'target':
-        setNewTarget(changedValue);
+        setNewTarget(newValue);
         break;
       default:
-        console.error('Input field doesn\'t have a name field');
+        console.error('Input field with this id does not exist');
     }
   }
 
   function cleanupInputs() {
-    setNewStart("");
-    setNewTarget("");
+    setNewStart('');
+    setNewTarget('');
   }
 
   return (
-    <form onSubmit={startButtonClicked} aria-label="Form to input Wikirace start and target inputs">
-
-        <Grid container spacing={8}>
-          <Grid size={5}>
+    <Container maxWidth="sm">
+      <Paper elevation={3} sx={{ padding: 4, marginTop: 4 }}>
+        <form 
+          onSubmit={startButtonClicked} 
+          aria-label="Form to input Wikirace start and target inputs"
+        >
+          
+          <Box sx={{ marginBottom: 2 }}>
             <WikiRaceInput 
               id="start"
               newValue={newStart}
-              handleInputChange={handleInputChange}
+              handleFormChange={handleFormChange}
             />
-          </Grid>
+          </Box>
 
-          <Grid size={5}>
+          <Box sx={{ marginBottom: 2 }}>
             <WikiRaceInput 
               id="target"
               newValue={newTarget}
-              handleInputChange={handleInputChange}
+              handleFormChange={handleFormChange}
             />
-          </Grid>
+          </Box>
 
-          <Grid size={2}>
-            <Button variant="contained" type="submit" /*disabled={newWikiRaceDisabled}*/>START</Button>
-          </Grid>
-        </Grid>
+          <Box>
+            <Button 
+              variant="contained"
+              type="submit" 
+              color="white" 
+              /*disabled={newWikiRaceDisabled}*/
+            >
+              Start
+            </Button>
+          </Box>
 
-      </form>
+        </form>
+      </Paper>
+    </Container>
   );
 }
 

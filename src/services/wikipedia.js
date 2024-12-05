@@ -16,7 +16,8 @@ async function searchWikipedia(query) {
 	};
 
   const response = await apiClient.get('', {params});
-  return response.data;
+	return response.data[1];
+  // return response.data;
 }
 
 export default { searchWikipedia };

@@ -1,80 +1,72 @@
-import * as React from 'react';
-import { FormControl, InputLabel, OutlinedInput, useAutocomplete } from '@mui/material';
-import { styled } from '@mui/system';
+import { useState } from 'react';
+import { FormControl, InputLabel, OutlinedInput, Autocomplete } from '@mui/material';
 
-const WikiRaceInput = ({ id, newValue, handleInputChange }) => {
-	const Listbox = styled('ul')(({ theme }) => ({
-    width: 200,
-    margin: 0,
-    padding: 0,
-    zIndex: 1,
-    position: 'absolute',
-    listStyle: 'none',
-    backgroundColor: '#fff',
-    overflow: 'auto',
-    maxHeight: 200,
-    border: '1px solid rgba(0,0,0,.25)',
-    '& li.Mui-focused': {
-      backgroundColor: '#4a8df6',
-      color: 'white',
-      cursor: 'pointer',
-    },
-    '& li:active': {
-      backgroundColor: '#2977f5',
-      color: 'white',
-    },
-    ...theme.applyStyles('dark', {
-      backgroundColor: '#000',
-    }),
-  }));
+import '../App.css';
+import wikipediaServices from '../services/wikipedia';
 
-	const {
-    getInputProps,
-    getListboxProps,
-    getOptionProps,
-    groupedOptions
-  } = useAutocomplete({
-    options: ['Greece', 'Greek language', 'Greece national football team', 'Greece\u2013Turkey relations', 'Greece in the Eurovision Song Contest'],
-    // onInputChange: () => __
-  });
+const WikiRaceInput = ({ id, handleFormChange }) => {
+	const [open, setOpen] = useState(false);
+	const [inputValue, setInputValue] = useState('');
+	const [options, setOptions] = useState([]);
+	const [loading, setLoading] = useState(false);
 
-	let placeholder = 'Wikiracing';
-	let label = 'Starting page';
-	let name = 'start';
+	const label = (id === 'start') ? 'Enter starting page' : 'Enter target page';
 
-	if (id === 'target') {
-		placeholder = 'Semisopochnoi_Island';
-		label = 'Target page';
-		name = 'target';
+  async function handleSearch(searchTerm) {
+		console.log(searchTerm);
+    setLoading(true);
+
+		const articles = await wikipediaServices.searchWikipedia(searchTerm);
+		const filteredOptions = articles.filter((article) => article.toLowerCase().startsWith(searchTerm.toLowerCase()));
+
+		setOptions(filteredOptions);
+		setLoading(false);
+  }
+
+	function handleInputChange(_, newInputValue) {
+		handleFormChange(id, newInputValue)
+		setInputValue(newInputValue);
+		if (newInputValue) {
+			handleSearch(newInputValue);
+		} else {
+			setOptions([]);
+		}
 	}
-
-	console.log(getListboxProps());
-
-	
 
 	return (
 		<FormControl>
 			<InputLabel>{label}</InputLabel>
-			<OutlinedInput {...getInputProps()}
-				placeholder={placeholder}
-				label={label}
-				name={name}
-				value={newValue}
-				onChange={handleInputChange} 
-				sx={{ width: '400px' }}
-			/>
-			{groupedOptions.length > 0 && (
-				<Listbox {...getListboxProps()}>
-					{groupedOptions.map((option, index) => {
-						const { key, ...optionProps } = getOptionProps({ option, index });
-						return (
-							<li key={key} {...optionProps}>
-								{option}
-							</li>
-						);
-					})}
-				</Listbox>
-			)}
+			<Autocomplete
+				id={id}
+        open={open}
+        onOpen={() => setOpen(true)}
+        onClose={() => {
+					setOpen(false);
+					setOptions([]);
+				}}
+        isOptionEqualToValue={(option, value) => option.code === value.code}
+        options={options}
+        loading={loading}
+        inputValue={inputValue}
+        onInputChange={handleInputChange}
+        renderInput={(params) => (
+					<OutlinedInput
+						{...params.InputProps}
+						{...params}
+						label={label}
+						endAdornment={null}
+						sx={{
+							width: '400px',
+						}}
+					/>
+        )}
+        renderOption={(props, option) => (
+          <li {...props} key={option}>
+						{option}
+          </li>
+        )}
+        noOptionsText="Wikipedia article not found"
+      />
 		</FormControl>
 	);
 }

@@ -65,7 +65,7 @@ function App() {
       minHeight="100vh"
       sx={{mx: '50px', justifyContent: 'space-between' }}
     >
-      <Box sx={{textAlign: 'center', justifyContent: 'flex-start'}} flex="1">
+      <Box sx={{textAlign: 'center', justifyContent: 'flex-start', flexWrap: 'wrap'}} flex="1">
 
         <Intro />
 
