@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { FormControl, InputLabel, OutlinedInput, Autocomplete } from '@mui/material';
+import { debounce } from 'lodash';
 
 import '../App.css';
 import wikipediaServices from '../services/wikipedia';
@@ -23,14 +24,20 @@ const WikiRaceInput = ({ id, handleFormChange }) => {
 		setLoading(false);
   }
 
+	const debouncedSearch = useCallback(
+		debounce((value) => {
+			if (value) {
+				handleSearch(value);
+			} else {
+				setOptions([]);
+			}
+		}, 250)
+	, []);
+
 	function handleInputChange(_, newInputValue) {
 		handleFormChange(id, newInputValue)
 		setInputValue(newInputValue);
-		if (newInputValue) {
-			handleSearch(newInputValue);
-		} else {
-			setOptions([]);
-		}
+		debouncedSearch(newInputValue);
 	}
 
 	return (
