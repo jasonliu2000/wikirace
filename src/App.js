@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography, } from '@mui/material';
+import { Box, Typography, Link } from '@mui/material';
 
-import './App.css';
+import backgroundStyles from './styles/backgroundStyles';
 import wikiraceServices from './services/wikirace';
 import Intro from './components/Intro';
 import WikiRaceForm from './components/WikiRaceForm';
@@ -71,22 +71,31 @@ function App() {
       display="flex"
       flexDirection="column"
       minHeight="100vh"
-      sx={{mx: '50px', justifyContent: 'space-between' }}
+      sx={{mx: '50px', justifyContent: 'space-between', textAlign: 'center'}}
     >
-      <Box sx={{textAlign: 'center', justifyContent: 'flex-start', flexWrap: 'wrap'}} flex="1">
+      <Box sx={{justifyContent: 'flex-start', flexWrap: 'wrap'}} flex="1">
 
-        <Intro />
+        <Intro/>
 
-        <WikiRaceForm followWikiRace={watchWikiRace}
-          // newWikiRaceDisabled={newWikiRaceDisabled}
-        />
+        <WikiRaceForm followWikiRace={watchWikiRace}/>
 
-        {wikiRaces.length > 0 && <HistoryTable rows={wikiRaces} />}
+        {wikiRaces.length > 0 && <HistoryTable rows={wikiRaces}/>}
 
       </Box>
 
       <Box component="footer">
-        <Typography>For more information about Wikiracing, please click <a target="_blank" rel="noreferrer" href="https://en.wikipedia.org/wiki/Wikiracing">here</a></Typography>
+        <Typography color="gray" sx={backgroundStyles}>
+          <i>For more information about Wikiracing, please click&nbsp;
+            <Link 
+              href="https://en.wikipedia.org/wiki/Wikiracing" 
+              target="_blank" 
+              rel="noreferrer" 
+              underline="none"
+            >
+              here
+            </Link>
+          </i>
+        </Typography>
       </Box>
     </Box>
   );

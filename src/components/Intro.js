@@ -1,13 +1,32 @@
-import '../App.css';
+import { Box, Typography } from '@mui/material';
+
+import backgroundStyles from '../styles/backgroundStyles';
 
 const Intro = () => {
 	return (
-		<div class="nonData">
-			<h1>Wikiracing</h1>
-      <h3>Navigate from one Wikipedia article to another using only internal links, in the fastest time possible.</h3>
+		<Box sx={backgroundStyles}>
+			<Typography 
+				variant="h1" 
+				sx={{
+					fontFamily: "inherit",
+					fontSize: "60px"
+				}} 
+				gutterBottom
+				>
+					Wikiracing
+			</Typography>
+			
+      <Typography 
+				variant="h6" 
+				color="gray" 
+				sx={{fontFamily: "inherit"}} 
+				gutterBottom
+			>
+				Navigate from one Wikipedia article to another using only internal links, in the fastest time possible.
+			</Typography>
 
       {/* <img src="wikiracing.png" alt="Wikiracing image"></img> */}
-		</div>
+		</Box>
 	);
 }
 
