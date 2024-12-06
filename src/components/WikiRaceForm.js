@@ -8,18 +8,15 @@ const WikiRaceForm = ({ followWikiRace }) => {
   const [newStart, setNewStart] = useState("");
   const [newTarget, setNewTarget] = useState("");
   const [count, setCount] = useState(0);
-  // const [newWikiRaceDisabled, setNewWikiRaceDisabled] = useState(false);
 
   async function startWikiRace(newWikiRace) {
     try {
       const response = await wikiraceServices.start(newWikiRace);
       if (response.status === 202) {
-        // setNewWikiRaceDisabled(true);
         cleanupInputs();
         followWikiRace(response.headers['location']);
       }
     } catch (error) {
-      // setWikiRaceFailed(true);
       console.error(error);
     }
   }
@@ -67,7 +64,6 @@ const WikiRaceForm = ({ followWikiRace }) => {
               variant="contained"
               type="submit" 
               color="white" 
-              /*disabled={newWikiRaceDisabled}*/
             >
               Start
             </Button>

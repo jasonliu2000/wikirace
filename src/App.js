@@ -50,7 +50,6 @@ function App() {
             resolve();
           } 
         } catch (error) {
-          // console.error(error);
           clearInterval(interval);
           reject(error);
         }
@@ -63,7 +62,6 @@ function App() {
       console.error(error);
     } finally {
       setWatchNewRace(false);
-      // setNewWikiRaceDisabled(false);
     }
 
   }
