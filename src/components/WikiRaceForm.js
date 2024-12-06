@@ -7,6 +7,7 @@ import wikiraceServices from '../services/wikirace';
 const WikiRaceForm = ({ followWikiRace }) => {
   const [newStart, setNewStart] = useState("");
   const [newTarget, setNewTarget] = useState("");
+  const [count, setCount] = useState(0);
   // const [newWikiRaceDisabled, setNewWikiRaceDisabled] = useState(false);
 
   async function startWikiRace(newWikiRace) {
@@ -29,22 +30,10 @@ const WikiRaceForm = ({ followWikiRace }) => {
     startWikiRace(wikiRaceAttempted);
   }
 
-  function handleFormChange(inputId, newValue) {
-    switch (inputId) {
-      case 'start':
-        setNewStart(newValue);
-        break;
-      case 'target':
-        setNewTarget(newValue);
-        break;
-      default:
-        console.error('Input field with this id does not exist');
-    }
-  }
-
   function cleanupInputs() {
-    setNewStart('');
-    setNewTarget('');
+    setNewStart("");
+    setNewTarget("");
+    setCount(prevCount => prevCount + 1);
   }
 
   return (
@@ -58,16 +47,18 @@ const WikiRaceForm = ({ followWikiRace }) => {
           <Box sx={{ marginBottom: 2 }}>
             <WikiRaceInput 
               id="start"
-              newValue={newStart}
-              handleFormChange={handleFormChange}
+              value={newStart}
+              onChange={setNewStart}
+              newRace={count}
             />
           </Box>
 
           <Box sx={{ marginBottom: 2 }}>
             <WikiRaceInput 
               id="target"
-              newValue={newTarget}
-              handleFormChange={handleFormChange}
+              value={newTarget}
+              onChange={setNewTarget}
+              newRace={count}
             />
           </Box>
 

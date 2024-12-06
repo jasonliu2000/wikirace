@@ -5,9 +5,8 @@ import { debounce } from 'lodash';
 import '../App.css';
 import wikipediaServices from '../services/wikipedia';
 
-const WikiRaceInput = ({ id, handleFormChange }) => {
+const WikiRaceInput = ({ id, value, onChange, newRace }) => {
 	const [open, setOpen] = useState(false);
-	const [inputValue, setInputValue] = useState('');
 	const [options, setOptions] = useState([]);
 	const [loading, setLoading] = useState(false);
 
@@ -24,19 +23,18 @@ const WikiRaceInput = ({ id, handleFormChange }) => {
   }
 
 	const debouncedSearch = useCallback(
-		debounce((value) => {
-			if (value) {
-				handleSearch(value);
+		debounce((searchTerm) => {
+			if (searchTerm) {
+				handleSearch(searchTerm);
 			} else {
 				setOptions([]);
 			}
 		}, 250)
 	, []);
 
-	function handleInputChange(_, newInputValue) {
-		setInputValue(newInputValue);
-		handleFormChange(id, newInputValue)
-		debouncedSearch(newInputValue);
+	function handleInputChange(_, newValue) {
+		onChange(newValue)
+		debouncedSearch(newValue);
 	}
 
 	return (
@@ -44,7 +42,8 @@ const WikiRaceInput = ({ id, handleFormChange }) => {
 			<InputLabel>{label}</InputLabel>
 			<Autocomplete
 				id={id}
-        open={open && inputValue}
+				key={newRace}
+        open={open && value}
         onOpen={() => setOpen(true)}
         onClose={() => {
 					setOpen(false);
@@ -53,7 +52,7 @@ const WikiRaceInput = ({ id, handleFormChange }) => {
         isOptionEqualToValue={(option, value) => option.code === value.code}
         options={options}
         loading={loading}
-        inputValue={inputValue}
+        inputValue={value}
         onInputChange={handleInputChange}
         renderInput={(params) => (
 					<OutlinedInput
