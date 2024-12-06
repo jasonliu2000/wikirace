@@ -35,7 +35,7 @@ const WikiRaceForm = ({ followWikiRace }) => {
 
   return (
     <Container maxWidth="sm">
-      <Paper elevation={3} sx={{ padding: 4, marginTop: 4 }}>
+      <Paper elevation={3} sx={{ padding: 4, margin: 4 }}>
         <form 
           onSubmit={startButtonClicked} 
           aria-label="Form to input Wikirace start and target inputs"
