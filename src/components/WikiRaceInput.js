@@ -12,16 +12,6 @@ const WikiRaceInput = ({ id, value, onChange, newRace }) => {
 
 	const label = (id === 'start') ? 'Enter starting page' : 'Enter target page';
 
-  async function handleSearch(searchTerm) {
-    setLoading(true);
-
-		const articles = await wikipediaServices.searchWikipedia(searchTerm);
-		const filteredOptions = articles.filter((article) => article.toLowerCase().startsWith(searchTerm.toLowerCase()));
-
-		setOptions(filteredOptions);
-		setLoading(false);
-  }
-
 	const debouncedSearch = useCallback(
 		debounce((searchTerm) => {
 			if (searchTerm) {
@@ -36,6 +26,19 @@ const WikiRaceInput = ({ id, value, onChange, newRace }) => {
 		onChange(newValue)
 		debouncedSearch(newValue);
 	}
+
+  async function handleSearch(searchTerm) {
+    setLoading(true);
+		try {
+			const articles = await wikipediaServices.searchWikipedia(searchTerm);
+			const filteredOptions = articles.filter((article) => article.toLowerCase().startsWith(searchTerm.toLowerCase()));
+			setOptions(filteredOptions);
+		} catch (error) {
+			console.error(error);
+		} finally {
+			setLoading(false);
+		}
+  }
 
 	return (
 		<FormControl>
