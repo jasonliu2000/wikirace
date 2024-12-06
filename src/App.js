@@ -83,7 +83,7 @@ function App() {
           // newWikiRaceDisabled={newWikiRaceDisabled}
         />
 
-        {wikiRaces.length > 0 && <HistoryTable rows={wikiRaces} waitForCompletion={watchNewRace} />}
+        {wikiRaces.length > 0 && <HistoryTable rows={wikiRaces} />}
 
       </Box>
 

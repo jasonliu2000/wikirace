@@ -1,17 +1,17 @@
 import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell, CircularProgress } from "@mui/material";
 
-const HistoryTable = ({ rows, waitForCompletion }) => {
+const HistoryTable = ({ rows }) => {
 
-  const lastColumn = (timeToCompletion, waiting) => {
-    if (!waiting && !timeToCompletion) {
-      return (<b style={{color: '#DC2626'}}>Failed</b>);
+  const lastColumn = (wikirace) => {
+    if (wikirace.data.timeToCompletionMilliseconds) {
+      return (<b>{wikirace.data.timeToCompletionMilliseconds}</b>);
     }
 
-    if (timeToCompletion) {
-      return (<b>{timeToCompletion}</b>);
+    if (wikirace.status === 'IN_PROGRESS') {
+      return (<CircularProgress size="20px" color="black"/>);
     }
 
-    return (<CircularProgress size="20px" color="black"/>);
+    return (<b style={{color: '#DC2626'}}>Failed</b>);
   }
 
   return (
@@ -34,7 +34,7 @@ const HistoryTable = ({ rows, waitForCompletion }) => {
               <TableCell>{row.data.start}</TableCell>
               <TableCell>{row.data.target}</TableCell>
               <TableCell align="right">
-                {lastColumn(row.data.timeToCompletionMilliseconds, waitForCompletion)}
+                {lastColumn(row)}
               </TableCell>
             </TableRow>
           ))}
