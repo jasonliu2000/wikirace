@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Button, Paper, Box, Container } from '@mui/material';
+import { Button, Paper, Box, Container, Alert } from '@mui/material';
 
 import WikiRaceInput from './WikiRaceInput';
 import wikiraceServices from '../services/wikirace';
@@ -49,6 +49,15 @@ const WikiRaceForm = ({ followWikiRace, serverError }) => {
           onSubmit={startButtonClicked} 
           aria-label="Form to input Wikirace start and target inputs"
         >
+
+          <Alert 
+            severity="error"
+            sx={{
+              marginBottom: 2
+            }}
+          >
+            Failed to connect to backend server.
+          </Alert>
           
           <Box sx={{ marginBottom: 2 }}>
             <WikiRaceInput 
@@ -78,8 +87,6 @@ const WikiRaceForm = ({ followWikiRace, serverError }) => {
               Start
             </Button>
           </Box>
-
-
 
         </form>
       </Paper>
