@@ -39,12 +39,14 @@ function App() {
     "timestamp": "2024-12-06T04:35:58.594013630Z"
 }]);
   const [watchNewRace, setWatchNewRace] = useState(false);
+  const [serverError, setServerError] = useState(false);
 
   useEffect(() => {
     fetchWikiRaces(); // function called everytime the browser is loaded/reloaded and everytime setWatchNewRace() is called
   }, [watchNewRace]);
 
   async function fetchWikiRaces() {
+    let setError = false;
     try {
       const races = await wikiraceServices.getAll();
       console.log(races);
@@ -58,12 +60,19 @@ function App() {
 
     } catch (error) {
       console.error(error);
+      setError = true;
+    } finally {
+      setServerError(setError);
     }
   }
 
   function watchWikiRace(id) {
     setWatchNewRace(true);
     pollWikiRaceProgress(id);
+  }
+
+  function displayWikiRaceTable() {
+    return wikiRaces.length > 0 && !serverError;
   }
 
   async function pollWikiRaceProgress(id) {
@@ -106,7 +115,7 @@ function App() {
 
         <Intro />
 
-        <WikiRaceForm followWikiRace={watchWikiRace}/>
+        <WikiRaceForm followWikiRace={watchWikiRace} serverError={serverError}/>
 
         {displayWikiRaceTable() && <WikiRaceTable wikiRaces={wikiRaces}/>}
 
