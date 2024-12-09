@@ -4,7 +4,7 @@ import { Button, Paper, Box, Container, Alert } from '@mui/material';
 import WikiRaceInput from './WikiRaceInput';
 import wikiraceServices from '../services/wikirace';
 
-const WikiRaceForm = ({ followWikiRace, serverError }) => {
+const WikiRaceForm = ({ onSuccess, serverError }) => {
   const [newStart, setNewStart] = useState("");
   const [newTarget, setNewTarget] = useState("");
   const [count, setCount] = useState(0);
@@ -19,7 +19,7 @@ const WikiRaceForm = ({ followWikiRace, serverError }) => {
       const response = await wikiraceServices.start(newWikiRace);
       if (response.status === 202) {
         cleanupInputs();
-        followWikiRace(response.headers['location']);
+        onSuccess(response.headers['location']);
       }
     } catch (error) {
       console.error(error);

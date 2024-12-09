@@ -115,7 +115,7 @@ function App() {
 
         <Intro />
 
-        <WikiRaceForm followWikiRace={watchWikiRace} serverError={serverError}/>
+        <WikiRaceForm onSuccess={watchWikiRace} serverError={serverError}/>
 
         {displayWikiRaceTable() && <WikiRaceTable wikiRaces={wikiRaces}/>}
 
