@@ -5,7 +5,7 @@ import backgroundStyles from './styles/backgroundStyles';
 import wikiraceServices from './services/wikirace';
 import Intro from './components/Intro';
 import WikiRaceForm from './components/WikiRaceForm';
-import HistoryTable from './components/HistoryTable';
+import WikiRaceTable from './components/WikiRaceHistory';
 
 function App() {
   const [wikiRaces, setWikiRaces] = useState([{
@@ -108,7 +108,7 @@ function App() {
 
         <WikiRaceForm followWikiRace={watchWikiRace}/>
 
-        {wikiRaces.length > 0 && <HistoryTable rows={wikiRaces}/>}
+        {displayWikiRaceTable() && <WikiRaceTable wikiRaces={wikiRaces}/>}
 
       </Box>
 
