@@ -42,6 +42,19 @@ const WikiRaceForm = ({ onSuccess, serverError }) => {
     setCount(prevCount => prevCount + 1);
   }
 
+  const alertElement = () => {
+    return (
+      <Alert 
+        severity="error"
+        sx={{
+          marginBottom: 2
+        }}
+      >
+        Failed to connect to backend server.
+      </Alert>
+    )
+  }
+
   return (
     <Container maxWidth="sm">
       <Paper elevation={3} sx={{ padding: 4, margin: 4 }}>
@@ -50,14 +63,7 @@ const WikiRaceForm = ({ onSuccess, serverError }) => {
           aria-label="Form to input Wikirace start and target inputs"
         >
 
-          <Alert 
-            severity="error"
-            sx={{
-              marginBottom: 2
-            }}
-          >
-            Failed to connect to backend server.
-          </Alert>
+          {serverError && alertElement}
           
           <Box sx={{ marginBottom: 2 }}>
             <WikiRaceInput 
