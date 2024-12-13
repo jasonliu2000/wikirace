@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const API_URL = process.env.REACT_APP_API_URL || ''; // if unset, the proxy address will be used by default in package.json
+
 const apiClient = axios.create({
-  baseURL: '/api',
+  baseURL: `${API_URL}/api`,
 });
 
 async function getAll() {

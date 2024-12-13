@@ -1,4 +1,4 @@
-# Build the project
+# Build the backend
 FROM maven AS build
 
 WORKDIR /app
@@ -16,5 +16,5 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar wikirace.jar
 
 # Default executable
-EXPOSE 8080
+EXPOSE 8081
 ENTRYPOINT ["java", "-jar", "wikirace.jar"]
