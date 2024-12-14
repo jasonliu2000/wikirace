@@ -8,6 +8,7 @@ const WikiRaceInput = ({ id, value, onChange, newRace }) => {
 	const [open, setOpen] = useState(false);
 	const [options, setOptions] = useState([]);
 	const [loading, setLoading] = useState(false);
+	const [wikiSvcDown, setWikiSvcDown] = useState(false);
 
 	const label = (id === 'start') ? 'Enter starting page' : 'Enter target page';
 
@@ -22,20 +23,29 @@ const WikiRaceInput = ({ id, value, onChange, newRace }) => {
 	, []);
 
 	function handleInputChange(_, newValue) {
-		onChange(newValue)
-		debouncedSearch(newValue);
+		if (value) {
+			handleSearch(newValue);
+		} else {
+			debouncedSearch(newValue);
+		}
+
+		onChange(newValue);
 	}
 
   async function handleSearch(searchTerm) {
-    setLoading(true);
+		let searchError = false;
+    setLoading(!wikiSvcDown);
+
 		try {
 			const articles = await wikipediaServices.searchWikipedia(searchTerm);
 			const filteredOptions = articles.filter((article) => article.toLowerCase().startsWith(searchTerm.toLowerCase()));
 			setOptions(filteredOptions);
 		} catch (error) {
 			console.error(error);
+			searchError = true;
 		} finally {
 			setLoading(false);
+			setWikiSvcDown(searchError);
 		}
   }
 
@@ -46,6 +56,7 @@ const WikiRaceInput = ({ id, value, onChange, newRace }) => {
 				id={id}
 				key={newRace}
         open={open && value}
+				freeSolo={wikiSvcDown}
         onOpen={() => setOpen(true)}
         onClose={() => {
 					setOpen(false);
