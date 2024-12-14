@@ -8,7 +8,7 @@ const WikiRaceForm = ({ onSuccess, serverError }) => {
   const [newStart, setNewStart] = useState("");
   const [newTarget, setNewTarget] = useState("");
   const [count, setCount] = useState(0);
-  const [buttonDisabled, setButtonDisabled] = useState(true);
+  const [buttonDisabled, setButtonDisabled] = useState(false);
 
   useEffect(() => {
     disableStartButton();
@@ -33,7 +33,7 @@ const WikiRaceForm = ({ onSuccess, serverError }) => {
   }
 
   function disableStartButton() {
-    setButtonDisabled(true);
+    setButtonDisabled(serverError);
   }
 
   function cleanupInputs() {
@@ -63,7 +63,7 @@ const WikiRaceForm = ({ onSuccess, serverError }) => {
           aria-label="Form to input Wikirace start and target inputs"
         >
 
-          {serverError && alertElement}
+          {serverError && alertElement()}
           
           <Box sx={{ marginBottom: 2 }}>
             <WikiRaceInput 
