@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell, CircularProgress, IconButton, Collapse, Box, Typography } from '@mui/material';
-import { KeyboardArrowUp, KeyboardArrowDown, TrendingFlat } from '@mui/icons-material';
+import { KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material';
 
-const WikiRaceRow = (wikiRace) => {
+const WikiRaceRow = ({ wikiRace }) => {
   const [open, setOpen] = useState(false);
 
   const lastColumn = () => {
@@ -79,7 +79,7 @@ const WikiRaceTable = ({ wikiRaces }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {wikiRaces.map((wikiRace) => WikiRaceRow(wikiRace))}
+          {wikiRaces.map((wikiRace) => <WikiRaceRow wikiRace={wikiRace}/>)}
         </TableBody>
       </Table>
     </TableContainer>
