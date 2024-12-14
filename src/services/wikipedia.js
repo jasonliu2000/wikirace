@@ -21,7 +21,7 @@ async function searchWikipedia(query) {
 			throw new Error('Unexpected API response format from Wikipedia');
 		}
 
-		const results = response.data[11];
+		const results = response.data[1];
 
 		if (!Array.isArray(results)) {
       throw new Error('Failed to find search results from API response');
