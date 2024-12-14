@@ -8,36 +8,7 @@ import WikiRaceForm from './components/WikiRaceForm';
 import WikiRaceTable from './components/WikiRaceHistory';
 
 function App() {
-  const [wikiRaces, setWikiRaces] = useState([{
-    "id": 1,
-    "status": "COMPLETED",
-    "message": "Wikirace is in COMPLETED.",
-    "data": {
-        "start": "Wikiracing",
-        "target": "Semisopochnoi Island",
-        "startTime": "2024-12-06T04:27:59.520567006Z",
-        "endTime": "",
-        "elapsedTimeMilliseconds": 479072,
-        "timeToCompletionMilliseconds": 123,
-        "pathToTarget": null
-    },
-    "timestamp": "2024-12-06T04:35:58.593994589Z"
-},
-{
-    "id": 2,
-    "status": "COMPLETED",
-    "message": "Wikirace is in COMPLETED.",
-    "data": {
-        "start": "Target Corporation",
-        "target": "RT (TV network)",
-        "startTime": "2024-12-06T04:28:05.909435925Z",
-        "endTime": "",
-        "elapsedTimeMilliseconds": 472684,
-        "timeToCompletionMilliseconds": 456,
-        "pathToTarget": ["Target Corporation", "Wikiracing", "RT (TV network)"]
-    },
-    "timestamp": "2024-12-06T04:35:58.594013630Z"
-}]);
+  const [wikiRaces, setWikiRaces] = useState([]);
   const [watchNewRace, setWatchNewRace] = useState(false);
   const [serverError, setServerError] = useState(false);
 
