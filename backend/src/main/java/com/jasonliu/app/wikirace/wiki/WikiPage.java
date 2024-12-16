@@ -17,7 +17,7 @@ public class WikiPage {
 
 	static String wikiBaseUrl = "https://en.wikipedia.org";
 	static String wikiSubPath = "/wiki/";
-	static String aTagsRegex = "^/wiki/(?!(?:File:|Special:|Template:|Template_talk:|Wikipedia:|Help:)).*";
+	static String aTagsRegex = "^/wiki/(?!(?:.*:)).*";
 
 	private static String getUrl(String identifier) {
 		return wikiBaseUrl + wikiSubPath + identifier;
