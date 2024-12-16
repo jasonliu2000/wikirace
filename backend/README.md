@@ -1,4 +1,4 @@
-# wikirace
+# wikirace (backend edition)
 
 A program that simulates [wikiracing](https://en.wikipedia.org/wiki/Wikiracing) in the fastest time possible.
 
