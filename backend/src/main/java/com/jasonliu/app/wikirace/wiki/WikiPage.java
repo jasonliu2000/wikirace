@@ -45,7 +45,7 @@ public class WikiPage {
 				response = Jsoup.connect(url).ignoreHttpErrors(true).execute();
 
 				if (response.statusCode() == 429) {
-					logger.severe(String.format("Received 429 error from server after attempting to get links from article %s (attempt %s)", page, Integer.toString(attempts)+1));
+					logger.severe(String.format("Received 429 error from server after attempting to get links from article %s (attempt %s)", page, Integer.toString(attempts + 1)));
 					retryDelay = Integer.parseInt(response.headers().get("retry-after")) * 1000;
 					attempts++;
 
