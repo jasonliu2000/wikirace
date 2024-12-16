@@ -15,6 +15,4 @@ WORKDIR /app
 
 COPY --from=build /app/target/*.jar wikirace.jar
 
-# Default executable
-EXPOSE 8081
 ENTRYPOINT ["java", "-jar", "wikirace.jar"]
