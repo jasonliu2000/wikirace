@@ -124,7 +124,7 @@ public class WikiRaceController {
 				int statusCode = e.getStatusCode();
 				if (statusCode == 404) {
 					throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("The provided Wikipedia article '%s' does not exist. Please try again.", article));
-				} else if (statusCode >= 500) {
+				} else if (statusCode >= 500 || statusCode == 429) {
 					throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "The upstream Wikipedia server failed. Please try again.");
 				} else {
 					throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "The server failed to verify that the Wikipedia article exist. Please file a ticket for a fix.");
